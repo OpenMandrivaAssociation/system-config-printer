@@ -21,13 +21,13 @@ BuildRequires:  xmlto
 BuildRequires:  epydoc
 
 Requires:       pygtk2 >= 2.4.0
-Requires:       pygobject2
+Requires:       python-gobject
 Requires:       usermode >= 1.94
 Requires:       desktop-file-utils >= 0.2.92
 Requires:       dbus-x11
 Requires:       system-config-printer-libs = %{version}-%{release}
 Requires:       gnome-icon-theme
-Requires:       gnome-python2
+Requires:       python-gnome
 Requires:       notification-daemon
 
 %description
