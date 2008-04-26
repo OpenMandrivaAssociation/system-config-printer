@@ -20,7 +20,7 @@ BuildRequires:  intltool
 BuildRequires:  xmlto
 BuildRequires:  epydoc
 
-Requires:       pygtk2 >= 2.4.0, pygtk2-libglade
+Requires:       pygtk2 >= 2.4.0
 Requires:       pygobject2
 Requires:       usermode >= 1.94
 Requires:       desktop-file-utils >= 0.2.92
