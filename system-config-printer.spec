@@ -9,9 +9,8 @@ License:        LGPLv2+
 Group:          TODO
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Source0:        %name-%{version}.tar.bz2
-Source1:        pycups-1.9.38.tar.bz2
-Source2:        system-config-printer.pam
-Source3:        system-config-printer.console
+Source1:        system-config-printer.pam
+Source2:        system-config-printer.console
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -87,8 +86,6 @@ the configuration tool.
 %defattr(-,root,root,-)
 %doc --parents pycups-1.9.38/{ChangeLog,README,NEWS,TODO,examples,html}
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/newprinternotification.conf
-%{python_sitearch}/cups.so
-%{python_sitearch}/cups-1.0-py2.5.egg-info
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/cupshelpers.py*
 %{_datadir}/%{name}/ppds.py*
@@ -96,24 +93,14 @@ the configuration tool.
 #--------------------------------------------------------------------
 
 %prep
-%setup -q -a 1
+%setup -q 
 
 %build
 %configure
 
-pushd pycups-1.9.38
-make
-make doc
-popd
-
 %install
 rm -rf %buildroot
 make DESTDIR=%buildroot install
-
-pushd pycups-1.9.38
-chmod 644 examples/cupstree.py
-make DESTDIR=%buildroot install
-popd
 
 mkdir -p %buildroot%{_bindir}
 mkdir -p %buildroot%{_sysconfdir}/pam.d
