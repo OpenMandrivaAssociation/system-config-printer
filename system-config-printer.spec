@@ -28,6 +28,7 @@ Requires:       system-config-printer-libs = %{version}-%{release}
 Requires:       gnome-icon-theme
 Requires:       python-gnome
 Requires:       notification-daemon
+Requires:       python-cups
 
 %description
 system-config-printer is a graphical user interface that allows
