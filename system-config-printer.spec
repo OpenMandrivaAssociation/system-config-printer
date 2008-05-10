@@ -85,7 +85,6 @@ the configuration tool.
 
 %files libs -f system-config-printer.lang
 %defattr(-,root,root,-)
-%doc --parents pycups-1.9.38/{ChangeLog,README,NEWS,TODO,examples,html}
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/newprinternotification.conf
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/cupshelpers.py*
@@ -106,8 +105,8 @@ make DESTDIR=%buildroot install
 mkdir -p %buildroot%{_bindir}
 mkdir -p %buildroot%{_sysconfdir}/pam.d
 mkdir -p %buildroot%{_sysconfdir}/security/console.apps
-install -p -m0644 %{SOURCE2} %buildroot%{_sysconfdir}/pam.d/%{name}
-install -p -m0644 %{SOURCE3} %buildroot%{_sysconfdir}/security/console.apps/%{name}
+install -p -m0644 %{SOURCE1} %buildroot%{_sysconfdir}/pam.d/%{name}
+install -p -m0644 %{SOURCE2} %buildroot%{_sysconfdir}/security/console.apps/%{name}
 ln -s consolehelper %buildroot%{_bindir}/%{name}
 
 %find_lang system-config-printer
