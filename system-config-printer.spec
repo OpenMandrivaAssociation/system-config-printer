@@ -74,10 +74,9 @@ the user to configure a CUPS print server.
 
 %package  libs
 Summary:  Common code for the graphical and non-graphical pieces
-Group:    System Environment/Base
+Group:    System/Libraries 
 Requires: python
 Requires: foomatic
-Provides: pycups = %{pycups_version}
 
 %description libs
 The common code used by both the graphical and non-graphical parts of
