@@ -6,7 +6,7 @@ Version:        0.9.90
 Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
-Group:          TODO
+Group:          System/Configuration/Printing
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Source0:        %name-%{version}.tar.bz2
 Source1:        system-config-printer.pam
