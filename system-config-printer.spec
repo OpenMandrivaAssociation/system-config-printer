@@ -3,7 +3,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        0.9.90
-Release:        %mkrel 1
+Release:        %mkrel 2
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -20,13 +20,14 @@ BuildRequires:  xmlto
 BuildRequires:  epydoc
 
 Requires:       pygtk2 >= 2.4.0
+Requires:       pygtk2.0-libglade
 Requires:       python-gobject
 Requires:       usermode >= 1.94
 Requires:       desktop-file-utils >= 0.2.92
 Requires:       dbus-x11
 Requires:       system-config-printer-libs = %{version}-%{release}
 Requires:       gnome-icon-theme
-Requires:       python-gnome
+Requires:       gnome-python
 Requires:       notification-daemon
 Requires:       python-cups
 
