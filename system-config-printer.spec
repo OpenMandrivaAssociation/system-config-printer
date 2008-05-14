@@ -17,7 +17,6 @@ BuildRequires:  desktop-file-utils >= 0.2.92
 BuildRequires:  gettext-devel
 BuildRequires:  intltool
 BuildRequires:  xmlto
-BuildRequires:  epydoc
 
 Requires:       pygtk2 >= 2.4.0
 Requires:       pygtk2.0-libglade
