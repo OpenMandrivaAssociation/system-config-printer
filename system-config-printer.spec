@@ -3,7 +3,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        0.9.90
-Release:        %mkrel 2
+Release:        %mkrel 3
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -27,7 +27,7 @@ Requires:       dbus-x11
 Requires:       system-config-printer-libs = %{version}-%{release}
 Requires:       gnome-icon-theme
 Requires:       gnome-python
-Requires:       notification-daemon
+Requires:       virtual-notification-daemon
 Requires:       python-cups
 
 %description
