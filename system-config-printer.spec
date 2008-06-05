@@ -29,6 +29,7 @@ Requires:       gnome-icon-theme
 Requires:       gnome-python
 Requires:       virtual-notification-daemon
 Requires:       python-cups
+Requires:	python-rhpl
 
 %description
 system-config-printer is a graphical user interface that allows
