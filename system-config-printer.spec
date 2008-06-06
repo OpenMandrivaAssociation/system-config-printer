@@ -2,8 +2,8 @@
 
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        0.9.90
-Release:        %mkrel 3
+Version:        0.9.93
+Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -46,6 +46,7 @@ the user to configure a CUPS print server.
 %{_datadir}/%{name}/config.py*
 %{_datadir}/%{name}/contextmenu.py*
 %{_datadir}/%{name}/debug.py*
+%{_datadir}/%{name}/errordialogs.py*
 %{_datadir}/%{name}/jobviewer.py*
 %{_datadir}/%{name}/monitor.py*
 %{_datadir}/%{name}/my-default-printer.py*
@@ -103,10 +104,12 @@ rm -rf %buildroot
 make DESTDIR=%buildroot install
 
 mkdir -p %buildroot%{_bindir}
+mkdir -p %buildroot%{_sbindir}
 mkdir -p %buildroot%{_sysconfdir}/pam.d
 mkdir -p %buildroot%{_sysconfdir}/security/console.apps
 install -p -m0644 %{SOURCE1} %buildroot%{_sysconfdir}/pam.d/%{name}
 install -p -m0644 %{SOURCE2} %buildroot%{_sysconfdir}/security/console.apps/%{name}
+mv %buildroot%{_bindir}/%{name} %buildroot%{_sbindir}/%{name}
 ln -s consolehelper %buildroot%{_bindir}/%{name}
 
 %find_lang system-config-printer
