@@ -1,8 +1,6 @@
-%define         svn   800427
-
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        0.9.93
+Version:        1.0.2
 Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
@@ -37,7 +35,7 @@ the user to configure a CUPS print server.
 
 %files
 %defattr(-,root,root)
-%doc ChangeLog README TODO
+%doc ChangeLog README
 %{_bindir}/%{name}
 %{_bindir}/%{name}-applet
 %{_bindir}/my-default-printer
