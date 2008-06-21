@@ -15,6 +15,7 @@ BuildRequires:  desktop-file-utils >= 0.2.92
 BuildRequires:  gettext-devel
 BuildRequires:  intltool
 BuildRequires:  xmlto
+BuildArch:	noarch
 
 Requires:       pygtk2 >= 2.4.0
 Requires:       pygtk2.0-libglade
@@ -95,7 +96,8 @@ the configuration tool.
 %setup -q 
 
 %build
-%configure
+./configure --prefix=%{_prefix} --sysconfdir=%{_sysconfdir}
+make
 
 %install
 rm -rf %buildroot
