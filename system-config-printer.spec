@@ -1,12 +1,12 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        1.0.2
+Version:        1.0.4
 Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-Source0:        %name-%{version}.tar.bz2
+Source0:        http://cyberelk.net/tim/data/system-config-printer/1.0.x/%{name}-%{version}.tar.bz2
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
 BuildRequires:  cups-devel >= 1.2
@@ -41,6 +41,7 @@ the user to configure a CUPS print server.
 %{_bindir}/%{name}-applet
 %{_bindir}/my-default-printer
 %{_sbindir}/%{name}
+%dir %{_datadir}/%{name}
 %{_datadir}/%{name}/authconn.py*
 %{_datadir}/%{name}/config.py*
 %{_datadir}/%{name}/contextmenu.py*
@@ -49,7 +50,6 @@ the user to configure a CUPS print server.
 %{_datadir}/%{name}/jobviewer.py*
 %{_datadir}/%{name}/monitor.py*
 %{_datadir}/%{name}/my-default-printer.py*
-%{_datadir}/%{name}/openprinting.py*
 %{_datadir}/%{name}/options.py*
 %{_datadir}/%{name}/optionwidgets.py*
 %{_datadir}/%{name}/probe_printer.py*
@@ -60,6 +60,7 @@ the user to configure a CUPS print server.
 %{_datadir}/%{name}/gtk_label_autowrap.py*
 %{_datadir}/%{name}/gtk_treeviewtooltips.py*
 %{_datadir}/%{name}/applet.py*
+%{_datadir}/%{name}/userdefault.py
 %{_datadir}/%{name}/troubleshoot
 %{_datadir}/%{name}/*.glade
 %{_datadir}/%{name}/icons
@@ -86,9 +87,12 @@ the configuration tool.
 %files libs -f system-config-printer.lang
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/newprinternotification.conf
-%dir %{_datadir}/%{name}
-%{_datadir}/%{name}/cupshelpers.py*
-%{_datadir}/%{name}/ppds.py*
+%dir %{python_sitelib}/cupshelpers
+%{python_sitelib}/cupshelpers/__init__.py*
+%{python_sitelib}/cupshelpers/cupshelpers.py*
+%{python_sitelib}/cupshelpers/openprinting.py*
+%{python_sitelib}/cupshelpers/ppds.py*
+%{python_sitelib}/*.egg-info
 
 #--------------------------------------------------------------------
 
