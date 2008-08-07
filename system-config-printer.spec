@@ -9,6 +9,10 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Source0:        http://cyberelk.net/tim/data/system-config-printer/1.0.x/%{name}-%{version}.tar.bz2
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
+Patch0:         system-config-printer-1.0.3-mdv_custom-applet.patch
+Patch1:         system-config-printer-1.0.3-mdv_custom-jobviewer.patch
+Patch2:         system-config-printer-1.0.3-mdv_custom-popup_menu.patch
+Patch3:         system-config-printer-1.0.3-mdv_custom-system-config-printer.patch
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -28,7 +32,10 @@ Requires:       gnome-icon-theme
 Requires:       gnome-python
 Requires:       virtual-notification-daemon
 Requires:       python-cups
-Requires:	python-rhpl
+Requires:       python-rhpl
+Requires:       python-dbus
+Requires:       hal-cups-utils
+Conflicts:      kdeutils4-printer-applet
 
 %description
 system-config-printer is a graphical user interface that allows
@@ -98,6 +105,10 @@ the configuration tool.
 
 %prep
 %setup -q 
+%patch0 -p1 -b .mdv_custom-applet
+%patch1 -p1 -b .mdv_custom-jobviewer
+%patch2 -p1 -b .mdv_custom-popumenu
+%patch3 -p1 -b .mdv_custom-system-config-printer
 
 %build
 ./configure --prefix=%{_prefix} --sysconfdir=%{_sysconfdir}
