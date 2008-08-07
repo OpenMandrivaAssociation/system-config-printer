@@ -1,7 +1,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.0.4
-Release:        %mkrel 1
+Release:        %mkrel 2
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -60,7 +60,7 @@ the user to configure a CUPS print server.
 %{_datadir}/%{name}/gtk_label_autowrap.py*
 %{_datadir}/%{name}/gtk_treeviewtooltips.py*
 %{_datadir}/%{name}/applet.py*
-%{_datadir}/%{name}/userdefault.py
+%{_datadir}/%{name}/userdefault.py*
 %{_datadir}/%{name}/troubleshoot
 %{_datadir}/%{name}/*.glade
 %{_datadir}/%{name}/icons
@@ -106,6 +106,12 @@ make
 %install
 rm -rf %buildroot
 make DESTDIR=%buildroot install
+
+# Make sure pyc files are generated, otherwise we can get
+# difficult to debug problems
+pushd %{buildroot}%{_datadir}/%{name}
+python -m compileall .
+popd
 
 mkdir -p %buildroot%{_bindir}
 mkdir -p %buildroot%{_sbindir}
