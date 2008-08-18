@@ -20,6 +20,7 @@ BuildRequires:  gettext-devel
 BuildRequires:  intltool
 BuildRequires:  xmlto
 BuildArch:	noarch
+Obsoletes:      desktop-printing
 
 Requires:       pygtk2 >= 2.4.0
 Requires:       pygtk2.0-libglade
