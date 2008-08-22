@@ -1,7 +1,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.0.4
-Release:        %mkrel 5
+Release:        %mkrel 6
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -12,8 +12,8 @@ Source2:        system-config-printer.console
 Patch0:         system-config-printer-1.0.3-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.0.3-mdv_custom-jobviewer.patch
 Patch2:         system-config-printer-1.0.3-mdv_custom-popup_menu.patch
-Patch3:         system-config-printer-1.0.3-mdv_custom-system-config-printer.patch
-Patch4:         system-config-printer-1.0.4-mdv_custom-embedded_window.patch
+Patch3:         system-config-printer-1.0.4-mdv_custom-embedded_window.patch
+Patch4:         system-config-printer-1.0.3-mdv_custom-system-config-printer.patch
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -110,8 +110,8 @@ the configuration tool.
 %patch0 -p1 -b .mdv_custom-applet
 %patch1 -p1 -b .mdv_custom-jobviewer
 %patch2 -p1 -b .mdv_custom-popumenu
-%patch3 -p1 -b .mdv_custom-system-config-printer
-%patch4 -p1 -b .mdv_custom-embedded-window
+%patch3 -p1 -b .mdv_custom-embedded-window
+%patch4 -p1 -b .mdv_custom-system-config-printer
 
 %build
 ./configure --prefix=%{_prefix} --sysconfdir=%{_sysconfdir}
