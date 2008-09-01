@@ -1,7 +1,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        1.0.6
-Release:        %mkrel 2
+Version:        1.0.7
+Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -38,6 +38,7 @@ Requires:       python-rhpl
 Requires:       python-dbus
 Requires:       hal-cups-utils
 Conflicts:      kdeutils4-printer-applet
+Suggests:       samba-client
 
 %description
 system-config-printer is a graphical user interface that allows
@@ -61,6 +62,7 @@ the user to configure a CUPS print server.
 %{_datadir}/%{name}/my-default-printer.py*
 %{_datadir}/%{name}/options.py*
 %{_datadir}/%{name}/optionwidgets.py*
+%{_datadir}/%{name}/PhysicalDevice.py*
 %{_datadir}/%{name}/probe_printer.py*
 %{_datadir}/%{name}/pysmb.py*
 %{_datadir}/%{name}/smburi.py*
