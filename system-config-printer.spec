@@ -24,6 +24,8 @@ BuildRequires:  intltool
 BuildRequires:  xmlto
 BuildArch:	noarch
 Obsoletes:      desktop-printing
+Obsoletes:      printerdrake
+Provides:       printerdrake
 
 Requires:       pygtk2 >= 2.4.0
 Requires:       pygtk2.0-libglade
