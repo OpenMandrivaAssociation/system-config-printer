@@ -1,7 +1,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.0.7
-Release:        %mkrel 4
+Release:        %mkrel 5
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -9,6 +9,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Source0:        http://cyberelk.net/tim/data/system-config-printer/1.0.x/%{name}-%{version}.tar.bz2
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
+Source3:        po-mdv.tar.bz2
 Patch0:         system-config-printer-1.0.3-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.0.3-mdv_custom-jobviewer.patch
 Patch2:         system-config-printer-1.0.3-mdv_custom-popup_menu.patch
@@ -121,6 +122,16 @@ the configuration tool.
 %patch3 -p1 -b .mdv_custom-embedded-window
 %patch4 -p1 -b .mdv_custom-system-config-printer
 %patch5 -p1 -b .system-config-printer-forbidden
+
+# update mdv custom translation
+tar xvjf %{SOURCE3}
+pushd po
+for i in *.po; do
+    msgcat $i ../po-mdv/$i > ../po-mdv/$i-new
+    rm -f $i
+    mv ../po-mdv/$i-new $i
+done
+popd
 
 %build
 ./configure --prefix=%{_prefix} --sysconfdir=%{_sysconfdir}
