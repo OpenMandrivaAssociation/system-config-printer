@@ -1,12 +1,18 @@
+%define use_gitsnap 1
+%{?_no_gitsnap: %{expand: %%global use_gitsnap 0}}
+%if %{use_gitsnap}
+%define gitsnap 200809151000
+%endif
+
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.0.7
-Release:        %mkrel 5
+Release:        %mkrel 6
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-Source0:        http://cyberelk.net/tim/data/system-config-printer/1.0.x/%{name}-%{version}.tar.bz2
+Source0:        http://cyberelk.net/tim/data/system-config-printer/1.0.x/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.bz2
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
 Source3:        po-mdv.tar.bz2
@@ -15,8 +21,6 @@ Patch1:         system-config-printer-1.0.3-mdv_custom-jobviewer.patch
 Patch2:         system-config-printer-1.0.3-mdv_custom-popup_menu.patch
 Patch3:         system-config-printer-1.0.4-mdv_custom-embedded_window.patch
 Patch4:         system-config-printer-1.0.3-mdv_custom-system-config-printer.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=460670
-Patch5:         system-config-printer-forbidden.patch
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -121,7 +125,6 @@ the configuration tool.
 %patch2 -p1 -b .mdv_custom-popumenu
 %patch3 -p1 -b .mdv_custom-embedded-window
 %patch4 -p1 -b .mdv_custom-system-config-printer
-%patch5 -p1 -b .system-config-printer-forbidden
 
 # update mdv custom translation
 tar xvjf %{SOURCE3}
@@ -134,6 +137,9 @@ done
 popd
 
 %build
+%if %{use_gitsnap}
+./bootstrap
+%endif
 ./configure --prefix=%{_prefix} --sysconfdir=%{_sysconfdir}
 make
 
