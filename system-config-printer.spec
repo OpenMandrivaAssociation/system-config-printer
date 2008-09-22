@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.0.7
-Release:        %mkrel 7
+Release:        %mkrel 8
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -133,6 +133,7 @@ for i in *.po; do
     msgcat $i ../po-mdv/$i > ../po-mdv/$i-new
     rm -f $i
     mv ../po-mdv/$i-new $i
+    sed -i '/#-#-#/d' $i
 done
 popd
 
