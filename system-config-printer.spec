@@ -1,13 +1,13 @@
 %define use_gitsnap 1
 %{?_no_gitsnap: %{expand: %%global use_gitsnap 0}}
 %if %{use_gitsnap}
-%define gitsnap 200809151000
+%define gitsnap 200809231700
 %endif
 
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.0.7
-Release:        %mkrel 9
+Release:        %mkrel 10
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -130,6 +130,9 @@ the configuration tool.
 tar xvjf %{SOURCE3}
 pushd po
 for i in *.po; do
+    if [ ! -f ../po-mdv/$i ]; then
+        continue
+    fi
     msgcat $i ../po-mdv/$i > ../po-mdv/$i-new
     rm -f $i
     mv ../po-mdv/$i-new $i
