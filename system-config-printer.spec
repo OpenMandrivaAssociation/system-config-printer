@@ -1,4 +1,4 @@
-%define use_gitsnap 1
+%define use_gitsnap 0
 %{?_no_gitsnap: %{expand: %%global use_gitsnap 0}}
 %if %{use_gitsnap}
 %define gitsnap 200809231700
@@ -6,8 +6,8 @@
 
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        1.0.7
-Release:        %mkrel 13
+Version:        1.0.10
+Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -27,7 +27,7 @@ BuildRequires:  desktop-file-utils >= 0.2.92
 BuildRequires:  gettext-devel
 BuildRequires:  intltool
 BuildRequires:  xmlto
-BuildArch:	noarch
+BuildArch:	    noarch
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
 Provides:       printerdrake
@@ -46,7 +46,7 @@ Requires:       python-cups
 Requires:       python-rhpl
 Requires:       python-dbus
 Requires:       hal-cups-utils
-Requires:	python-notify
+Requires:	    python-notify
 Conflicts:      kdeutils4-printer-applet
 Suggests:       samba-client
 
