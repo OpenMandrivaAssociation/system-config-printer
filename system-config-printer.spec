@@ -16,7 +16,7 @@ Source0:        http://cyberelk.net/tim/data/system-config-printer/1.0.x/%{name}
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
 Source3:        po-mdv.tar.bz2
-Patch0:         system-config-printer-1.0.3-mdv_custom-applet.patch
+Patch0:         system-config-printer-1.0.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.0.3-mdv_custom-jobviewer.patch
 Patch2:         system-config-printer-1.0.3-mdv_custom-popup_menu.patch
 Patch3:         system-config-printer-1.0.4-mdv_custom-embedded_window.patch
