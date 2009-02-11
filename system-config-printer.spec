@@ -6,7 +6,7 @@
 
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        1.0.13
+Version:        1.0.14
 Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
@@ -20,7 +20,7 @@ Patch0:         system-config-printer-1.0.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.0.3-mdv_custom-jobviewer.patch
 Patch2:         system-config-printer-1.0.3-mdv_custom-popup_menu.patch
 Patch3:         system-config-printer-1.0.4-mdv_custom-embedded_window.patch
-Patch4:         system-config-printer-1.0.3-mdv_custom-system-config-printer.patch
+Patch4:         system-config-printer-1.0.14-mdv_custom-system-config-printer.patch
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
