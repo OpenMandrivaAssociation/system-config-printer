@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.0.16
-Release:        %mkrel 3
+Release:        %mkrel 4
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -21,6 +21,7 @@ Patch1:         system-config-printer-1.0.3-mdv_custom-jobviewer.patch
 Patch2:         system-config-printer-1.0.3-mdv_custom-popup_menu.patch
 Patch3:         system-config-printer-1.0.4-mdv_custom-embedded_window.patch
 Patch4:         system-config-printer-1.0.14-mdv_custom-system-config-printer.patch
+Patch5:         system-config-printer-1.0.16-revert-27ddb74-start_applet_for_kde4.patch
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -125,6 +126,7 @@ the configuration tool.
 %patch2 -p1 -b .mdv_custom-popumenu
 %patch3 -p1 -b .mdv_custom-embedded-window
 %patch4 -p1 -b .mdv_custom-system-config-printer
+%patch5 -p0 -b .start_applet_for_kde4
 
 # update mdv custom translation
 tar xvjf %{SOURCE3}
@@ -137,8 +139,6 @@ for i in *.po; do
     rm -f $i
     mv ../po-mdv/$i-new $i
 done
-# "#-#..." lines are comments, and crash gettext.py (bugs #49475, #44088)
-sed -i '/^"#-#/d' *.po
 popd
 
 %build
