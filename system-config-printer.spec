@@ -28,6 +28,7 @@ BuildRequires:  desktop-file-utils >= 0.2.92
 BuildRequires:  gettext-devel
 BuildRequires:  intltool
 BuildRequires:  xmlto
+BuildRequires:  docbook-dtd412-xml
 BuildArch:	    noarch
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
