@@ -6,22 +6,20 @@
 
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        1.0.16
-Release:        %mkrel 5
+Version:        1.1.12
+Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-Source0:        http://cyberelk.net/tim/data/system-config-printer/1.0.x/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.bz2
+Source0:        http://cyberelk.net/tim/data/system-config-printer/1.0.x/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.xz
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
 Source3:        po-mdv.tar.bz2
-Patch0:         system-config-printer-1.0.12-mdv_custom-applet.patch
-Patch1:         system-config-printer-1.0.3-mdv_custom-jobviewer.patch
-Patch2:         system-config-printer-1.0.3-mdv_custom-popup_menu.patch
-Patch3:         system-config-printer-1.0.4-mdv_custom-embedded_window.patch
-Patch4:         system-config-printer-1.0.14-mdv_custom-system-config-printer.patch
-Patch5:         system-config-printer-1.0.16-revert-27ddb74-start_applet_for_kde4.patch
+Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
+Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
+Patch2:         system-config-printer-1.1.12-mdv_custom-system-config-printer.patch
+Patch3:         system-config-printer-1.0.16-revert-27ddb74-start_applet_for_kde4.patch
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -29,6 +27,7 @@ BuildRequires:  gettext-devel
 BuildRequires:  intltool
 BuildRequires:  xmlto
 BuildRequires:  docbook-dtd412-xml
+BuildRequires:  docbook-style-xsl
 BuildArch:	    noarch
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
@@ -64,36 +63,16 @@ the user to configure a CUPS print server.
 %{_bindir}/my-default-printer
 %{_sbindir}/%{name}
 %dir %{_datadir}/%{name}
-%{_datadir}/%{name}/authconn.py*
-%{_datadir}/%{name}/config.py*
-%{_datadir}/%{name}/contextmenu.py*
-%{_datadir}/%{name}/debug.py*
-%{_datadir}/%{name}/errordialogs.py*
-%{_datadir}/%{name}/jobviewer.py*
-%{_datadir}/%{name}/monitor.py*
-%{_datadir}/%{name}/my-default-printer.py*
-%{_datadir}/%{name}/options.py*
-%{_datadir}/%{name}/optionwidgets.py*
-%{_datadir}/%{name}/PhysicalDevice.py*
-%{_datadir}/%{name}/probe_printer.py*
-%{_datadir}/%{name}/pysmb.py*
-%{_datadir}/%{name}/smburi.py*
-%{_datadir}/%{name}/statereason.py*
-%{_datadir}/%{name}/system-config-printer.py*
-%{_datadir}/%{name}/gtk_label_autowrap.py*
-%{_datadir}/%{name}/AdvancedServerSettings.py*
-%{_datadir}/%{name}/gtk_treeviewtooltips.py*
-%{_datadir}/%{name}/applet.py*
-%{_datadir}/%{name}/userdefault.py*
+%{_datadir}/%{name}/*.py*
 %{_datadir}/%{name}/troubleshoot
-%{_datadir}/%{name}/*.glade
+%{_datadir}/%{name}/glade/*.glade
 %{_datadir}/%{name}/icons
-%{_datadir}/applications/redhat-system-config-printer.desktop
-%{_datadir}/applications/redhat-manage-print-jobs.desktop
-%{_datadir}/applications/redhat-my-default-printer.desktop
+%{_datadir}/applications/system-config-printer.desktop
+%{_datadir}/applications/manage-print-jobs.desktop
+%{_datadir}/applications/my-default-printer.desktop
+%{_sysconfdir}/xdg/autostart/print-applet.desktop
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
-%{_sysconfdir}/xdg/autostart/redhat-print-applet.desktop
 %{_mandir}/man1/*
 
 #---------------------------------------------------------------------
@@ -123,11 +102,9 @@ the configuration tool.
 %prep
 %setup -q 
 %patch0 -p1 -b .mdv_custom-applet
-%patch1 -p1 -b .mdv_custom-jobviewer
-%patch2 -p1 -b .mdv_custom-popumenu
-%patch3 -p1 -b .mdv_custom-embedded-window
-%patch4 -p1 -b .mdv_custom-system-config-printer
-%patch5 -p0 -b .start_applet_for_kde4
+%patch1 -p1 -b .mdv_custom-embedded-window
+%patch2 -p1 -b .mdv_custom-system-config-printer
+%patch3 -p0 -b .start_applet_for_kde4
 
 # update mdv custom translation
 tar xvjf %{SOURCE3}
