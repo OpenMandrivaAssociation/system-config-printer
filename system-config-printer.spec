@@ -6,13 +6,13 @@
 
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        1.1.12
+Version:        1.1.13
 Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-Source0:        http://cyberelk.net/tim/data/system-config-printer/1.0.x/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.xz
+Source0:        http://cyberelk.net/tim/data/system-config-printer/1.1/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.xz
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
 Source3:        po-mdv.tar.bz2
