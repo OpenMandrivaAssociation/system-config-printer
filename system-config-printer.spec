@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 1
+Release:        %mkrel 2
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -36,6 +36,7 @@ Provides:       printerdrake
 Requires:       pygtk2 >= 2.4.0
 Requires:       pygtk2.0-libglade
 Requires:       python-gobject
+Requires:       libxml2-python
 Requires:       usermode >= 1.94
 Requires:       desktop-file-utils >= 0.2.92
 Requires:       dbus-x11
