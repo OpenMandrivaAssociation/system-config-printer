@@ -28,6 +28,7 @@ BuildRequires:  intltool
 BuildRequires:  xmlto
 BuildRequires:  docbook-dtd412-xml
 BuildRequires:  docbook-style-xsl
+BuildRequires:  udev-devel
 BuildArch:	    noarch
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
@@ -74,6 +75,8 @@ the user to configure a CUPS print server.
 %{_sysconfdir}/xdg/autostart/print-applet.desktop
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
+%{_sysconfdir}/udev/rules.d/*.rules
+/lib/udev/*
 %{_mandir}/man1/*
 
 #---------------------------------------------------------------------
@@ -124,7 +127,7 @@ popd
 %if %{use_gitsnap}
 ./bootstrap
 %endif
-./configure --prefix=%{_prefix} --sysconfdir=%{_sysconfdir}
+./configure --prefix=%{_prefix} --sysconfdir=%{_sysconfdir} --with-udev-rules 
 make
 
 %install
