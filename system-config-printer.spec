@@ -29,7 +29,6 @@ BuildRequires:  xmlto
 BuildRequires:  docbook-dtd412-xml
 BuildRequires:  docbook-style-xsl
 BuildRequires:  udev-devel
-BuildArch:	    noarch
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
 Provides:       printerdrake
