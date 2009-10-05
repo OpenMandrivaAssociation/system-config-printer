@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 3
+Release:        %mkrel 4
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -42,7 +42,6 @@ Requires:       pygtk2 >= 2.4.0
 Requires:       pygtk2.0-libglade
 Requires:       python-gobject
 Requires:       libxml2-python
-Requires:       usermode >= 1.94
 Requires:       desktop-file-utils >= 0.2.92
 Requires:       dbus-x11
 Requires:       system-config-printer-libs = %{version}-%{release}
@@ -67,7 +66,6 @@ the user to configure a CUPS print server.
 %{_bindir}/%{name}
 %{_bindir}/%{name}-applet
 %{_bindir}/my-default-printer
-%{_sbindir}/%{name}
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/*.py*
 %{_datadir}/%{name}/troubleshoot
@@ -77,8 +75,6 @@ the user to configure a CUPS print server.
 %{_datadir}/applications/manage-print-jobs.desktop
 %{_datadir}/applications/my-default-printer.desktop
 %{_sysconfdir}/xdg/autostart/print-applet.desktop
-%config(noreplace) %{_sysconfdir}/pam.d/%{name}
-%config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
 %{_sysconfdir}/udev/rules.d/*.rules
 /lib/udev/*
 %{_mandir}/man1/*
@@ -148,15 +144,6 @@ make DESTDIR=%buildroot install
 pushd %{buildroot}%{_datadir}/%{name}
 python -m compileall .
 popd
-
-mkdir -p %buildroot%{_bindir}
-mkdir -p %buildroot%{_sbindir}
-mkdir -p %buildroot%{_sysconfdir}/pam.d
-mkdir -p %buildroot%{_sysconfdir}/security/console.apps
-install -p -m0644 %{SOURCE1} %buildroot%{_sysconfdir}/pam.d/%{name}
-install -p -m0644 %{SOURCE2} %buildroot%{_sysconfdir}/security/console.apps/%{name}
-mv %buildroot%{_bindir}/%{name} %buildroot%{_sbindir}/%{name}
-ln -s consolehelper %buildroot%{_bindir}/%{name}
 
 %find_lang system-config-printer
 
