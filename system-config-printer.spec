@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 6
+Release:        %mkrel 7
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -16,6 +16,8 @@ Source0:        http://cyberelk.net/tim/data/system-config-printer/1.1/%{name}-%
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
 Source3:        po-mdv.tar.bz2
+Source4:        mdv_backend 
+Source5:        mdv_printer_custom.py
 Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
 Patch2:         system-config-printer-1.1.12-mdv_custom-system-config-printer.patch
@@ -112,12 +114,14 @@ the configuration tool.
 %files libs -f system-config-printer.lang
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/newprinternotification.conf
+%{_libdir}/cups/backend/mdv_backend
 %dir %{python_sitelib}/cupshelpers
 %{python_sitelib}/cupshelpers/__init__.py*
 %{python_sitelib}/cupshelpers/cupshelpers.py*
 %{python_sitelib}/cupshelpers/openprinting.py*
 %{python_sitelib}/cupshelpers/ppds.py*
 %{python_sitelib}/*.egg-info
+%{python_sitelib}/mdv_printer_custom.py
 
 #--------------------------------------------------------------------
 
@@ -166,6 +170,9 @@ popd
 %{__mkdir_p} %buildroot%{_localstatedir}/run/udev-configure-printer
 touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
 
+%{__mkdir_p} %{buildroot}%{_libdir}/cups/backend
+cp -f %{SOURCE4} %{buildroot}%{_libdir}/cups/backend
+cp -f %{SOURCE5} %{buildroot}%{py_platsitedir}
 %find_lang system-config-printer
 
 %clean
