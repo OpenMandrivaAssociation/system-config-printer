@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 7
+Release:        %mkrel 8
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -172,6 +172,7 @@ touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
 
 %{__mkdir_p} %{buildroot}%{_libdir}/cups/backend
 cp -f %{SOURCE4} %{buildroot}%{_libdir}/cups/backend
+%{__mkdir_p} %{buildroot}%{py_platsitedir}
 cp -f %{SOURCE5} %{buildroot}%{py_platsitedir}
 %find_lang system-config-printer
 
