@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 5
+Release:        %mkrel 6
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -81,7 +81,7 @@ the user to configure a CUPS print server.
 
 %package udev
 Summary: Rules for udev for automatic configuration of USB printers
-Group: System Environment/Base
+Group:    System/Configuration/Hardware
 Requires: system-config-printer-libs = %{version}-%{release}
 Obsoletes: hal-cups-utils <= 0.6.20
 Provides: hal-cups-utils = 0.6.20
