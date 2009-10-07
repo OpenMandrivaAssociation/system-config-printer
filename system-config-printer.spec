@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 4
+Release:        %mkrel 5
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -44,7 +44,7 @@ Requires:       python-gobject
 Requires:       libxml2-python
 Requires:       desktop-file-utils >= 0.2.92
 Requires:       dbus-x11
-Requires:       system-config-printer-libs = %{version}-%{release}
+Requires:       system-config-printer-udev = %{version}-%{release}
 Requires:       gnome-icon-theme
 Requires:       gnome-python
 Requires:       virtual-notification-daemon
@@ -75,9 +75,27 @@ the user to configure a CUPS print server.
 %{_datadir}/applications/manage-print-jobs.desktop
 %{_datadir}/applications/my-default-printer.desktop
 %{_sysconfdir}/xdg/autostart/print-applet.desktop
+%{_mandir}/man1/*
+
+#---------------------------------------------------------------------
+
+%package udev
+Summary: Rules for udev for automatic configuration of USB printers
+Group: System Environment/Base
+Requires: system-config-printer-libs = %{version}-%{release}
+Obsoletes: hal-cups-utils <= 0.6.20
+Provides: hal-cups-utils = 0.6.20
+
+%description udev
+The udev rules and helper programs for automatically configuring USB
+printers.
+
+%files udev
+%defattr(-,root,root,-)
 %{_sysconfdir}/udev/rules.d/*.rules
 /lib/udev/*
-%{_mandir}/man1/*
+%dir %{_localstatedir}/run/udev-configure-printer
+%verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
 
 #---------------------------------------------------------------------
 
@@ -144,6 +162,9 @@ make DESTDIR=%buildroot install
 pushd %{buildroot}%{_datadir}/%{name}
 python -m compileall .
 popd
+
+%{__mkdir_p} %buildroot%{_localstatedir}/run/udev-configure-printer
+touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
 
 %find_lang system-config-printer
 
