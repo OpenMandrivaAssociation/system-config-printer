@@ -121,7 +121,7 @@ the configuration tool.
 %{python_sitelib}/cupshelpers/openprinting.py*
 %{python_sitelib}/cupshelpers/ppds.py*
 %{python_sitelib}/*.egg-info
-%{python_sitelib}/mdv_printer_custom.py
+%{py_platsitedir}/mdv_printer_custom.py
 
 #--------------------------------------------------------------------
 
