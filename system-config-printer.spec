@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 8
+Release:        %mkrel 9
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -54,7 +54,11 @@ Requires:       python-cups
 Requires:       python-rhpl
 Requires:       python-dbus
 Requires:       hal-cups-utils
-Requires:	    python-notify
+Requires:       python-notify
+Requires:       hplip-model-data
+# nmap is required to scan the network, just like 
+# printerdrake used to do.
+Requires:       nmap
 Conflicts:      kdeutils4-printer-applet
 Suggests:       samba-client
 
