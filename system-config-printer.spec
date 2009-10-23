@@ -7,7 +7,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 9
+Release:        %mkrel 10
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -20,7 +20,7 @@ Source4:        mdv_backend
 Source5:        mdv_printer_custom.py
 Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
-Patch2:         system-config-printer-1.1.12-mdv_custom-system-config-printer.patch
+Patch2:         system-config-printer-1.1.13-mdv_custom-system-config-printer.patch
 Patch3:         system-config-printer-1.0.16-revert-27ddb74-start_applet_for_kde4.patch
 Patch4:         system-config-printer-missing-import.patch
 Patch5:         system-config-printer-fetchdevices.patch
@@ -53,7 +53,6 @@ Requires:       virtual-notification-daemon
 Requires:       python-cups
 Requires:       python-rhpl
 Requires:       python-dbus
-Requires:       hal-cups-utils
 Requires:       python-notify
 Requires:       hplip-model-data
 # nmap is required to scan the network, just like 
@@ -90,7 +89,6 @@ Summary: Rules for udev for automatic configuration of USB printers
 Group:    System/Configuration/Hardware
 Requires: system-config-printer-libs = %{version}-%{release}
 Obsoletes: hal-cups-utils <= 0.6.20
-Provides: hal-cups-utils = 0.6.20
 
 %description udev
 The udev rules and helper programs for automatically configuring USB
