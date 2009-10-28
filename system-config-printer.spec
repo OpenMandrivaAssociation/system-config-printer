@@ -4,10 +4,13 @@
 %define gitsnap 200809231700
 %endif
 
+# needs porting of Mandriva specific features from hal-cups-utils to s-c-p-udev
+%define         obsolete_hal_cups_utils 0
+
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 10
+Release:        %mkrel 11
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -16,8 +19,6 @@ Source0:        http://cyberelk.net/tim/data/system-config-printer/1.1/%{name}-%
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
 Source3:        po-mdv.tar.bz2
-Source4:        mdv_backend 
-Source5:        mdv_printer_custom.py
 Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
 Patch2:         system-config-printer-1.1.13-mdv_custom-system-config-printer.patch
@@ -35,8 +36,10 @@ BuildRequires:  intltool
 BuildRequires:  xmlto
 BuildRequires:  docbook-dtd412-xml
 BuildRequires:  docbook-style-xsl
+%if %obsolete_hal_cups_utils
 BuildRequires:  udev-devel
 BuildRequires:  libusb-devel
+%endif
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
 Provides:       printerdrake
@@ -46,7 +49,12 @@ Requires:       python-gobject
 Requires:       libxml2-python
 Requires:       desktop-file-utils >= 0.2.92
 Requires:       dbus-x11
+Requires:       system-config-printer-libs = %{version}-%{release}
+%if %obsolete_hal_cups_utils
 Requires:       system-config-printer-udev = %{version}-%{release}
+%else
+Requires:       hal-cups-utils
+%endif
 Requires:       gnome-icon-theme
 Requires:       gnome-python
 Requires:       virtual-notification-daemon
@@ -54,10 +62,12 @@ Requires:       python-cups
 Requires:       python-rhpl
 Requires:       python-dbus
 Requires:       python-notify
+%if %obsolete_hal_cups_utils
 Requires:       hplip-model-data
 # nmap is required to scan the network, just like 
 # printerdrake used to do.
 Requires:       nmap
+%endif
 Conflicts:      kdeutils4-printer-applet
 Suggests:       samba-client
 
@@ -83,7 +93,7 @@ the user to configure a CUPS print server.
 %{_mandir}/man1/*
 
 #---------------------------------------------------------------------
-
+%if %obsolete_hal_cups_utils
 %package udev
 Summary: Rules for udev for automatic configuration of USB printers
 Group:    System/Configuration/Hardware
@@ -100,6 +110,7 @@ printers.
 /lib/udev/*
 %dir %{_localstatedir}/run/udev-configure-printer
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
+%endif #obsolete_hal_cups_utils
 
 #---------------------------------------------------------------------
 
@@ -116,14 +127,12 @@ the configuration tool.
 %files libs -f system-config-printer.lang
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/newprinternotification.conf
-%{_libdir}/cups/backend/mdv_backend
 %dir %{python_sitelib}/cupshelpers
 %{python_sitelib}/cupshelpers/__init__.py*
 %{python_sitelib}/cupshelpers/cupshelpers.py*
 %{python_sitelib}/cupshelpers/openprinting.py*
 %{python_sitelib}/cupshelpers/ppds.py*
 %{python_sitelib}/*.egg-info
-%{py_platsitedir}/mdv_printer_custom.py
 
 #--------------------------------------------------------------------
 
@@ -156,7 +165,12 @@ popd
 %if %{use_gitsnap}
 ./bootstrap
 %endif
-./configure --prefix=%{_prefix} --sysconfdir=%{_sysconfdir} --with-udev-rules --with-polkit-1
+./configure --prefix=%{_prefix} \
+	--sysconfdir=%{_sysconfdir} \
+%if %obsolete_hal_cups_utils
+	--with-udev-rules \
+%endif
+	--with-polkit-1
 %make
 
 %install
@@ -169,13 +183,11 @@ pushd %{buildroot}%{_datadir}/%{name}
 python -m compileall .
 popd
 
+%if %obsolete_hal_cups_utils
 %{__mkdir_p} %buildroot%{_localstatedir}/run/udev-configure-printer
 touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
+%endif
 
-%{__mkdir_p} %{buildroot}%{_libdir}/cups/backend
-cp -f %{SOURCE4} %{buildroot}%{_libdir}/cups/backend
-%{__mkdir_p} %{buildroot}%{py_platsitedir}
-cp -f %{SOURCE5} %{buildroot}%{py_platsitedir}
 %find_lang system-config-printer
 
 %clean
