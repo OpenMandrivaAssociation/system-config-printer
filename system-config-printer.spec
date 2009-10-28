@@ -10,7 +10,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.13
-Release:        %mkrel 11
+Release:        %mkrel 12
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -54,6 +54,7 @@ Requires:       system-config-printer-libs = %{version}-%{release}
 Requires:       system-config-printer-udev = %{version}-%{release}
 %else
 Requires:       hal-cups-utils
+Obsoletes:	system-config-printer-udev < 1.1.13-11mdv
 %endif
 Requires:       gnome-icon-theme
 Requires:       gnome-python
