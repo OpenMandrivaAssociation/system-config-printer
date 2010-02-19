@@ -9,8 +9,8 @@
 
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        1.1.13
-Release:        %mkrel 12
+Version:        1.1.17
+Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -21,13 +21,8 @@ Source2:        system-config-printer.console
 Source3:        po-mdv.tar.bz2
 Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
-Patch2:         system-config-printer-1.1.13-mdv_custom-system-config-printer.patch
+Patch2:         system-config-printer-1.1.17-mdv_custom-system-config-printer.patch
 Patch3:         system-config-printer-1.0.16-revert-27ddb74-start_applet_for_kde4.patch
-Patch4:         system-config-printer-missing-import.patch
-Patch5:         system-config-printer-fetchdevices.patch
-Patch6:         system-config-printer-iconify.patch
-Patch7:         system-config-printer-cancel-traceback.patch
-Patch8:         system-config-printer-data-button-state.patch
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -141,13 +136,8 @@ the configuration tool.
 %setup -q 
 %patch0 -p1 -b .mdv_custom-applet
 %patch1 -p1 -b .mdv_custom-embedded-window
-%patch2 -p1 -b .mdv_custom-system-config-printer
+%patch2 -p0 -b .mdv_custom-system-config-printer
 %patch3 -p0 -b .start_applet_for_kde4
-%patch4 -p1 -b .missing-import
-%patch5 -p1 -b .fetchdevices
-%patch6 -p1 -b .iconify
-%patch7 -p1 -b .cancel-traceback
-%patch8 -p1 -b .data-button-state
 
 # update mdv custom translation
 tar xvjf %{SOURCE3}
