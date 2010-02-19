@@ -22,7 +22,14 @@ Source3:        po-mdv.tar.bz2
 Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
 Patch2:         system-config-printer-1.1.17-mdv_custom-system-config-printer.patch
-Patch3:         system-config-printer-1.0.16-revert-27ddb74-start_applet_for_kde4.patch
+Patch3:         system-config-printer-1.1.17-start-applet.patch
+# Ubuntu patches
+# use hpcups instead of hpijs for HP printers, like in
+# previous versions. hpijs is obsolete and hpcup is mature now
+Patch101:	50_give-priority-to-hpcups.patch
+# when comparing usb uris, deal with the difference between the obsolete
+# usblp and the new libusb back-end
+Patch102:	67_match-usb-uris-of-usblp-and-libusb.patch
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -137,7 +144,9 @@ the configuration tool.
 %patch0 -p1 -b .mdv_custom-applet
 %patch1 -p1 -b .mdv_custom-embedded-window
 %patch2 -p0 -b .mdv_custom-system-config-printer
-%patch3 -p0 -b .start_applet_for_kde4
+%patch3 -p0 -b .start_applet
+%patch101 -p1 -b .hpcupsprio
+%patch102 -p1 -b .libusb
 
 # update mdv custom translation
 tar xvjf %{SOURCE3}
