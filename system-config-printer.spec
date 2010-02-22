@@ -9,8 +9,8 @@
 
 Name:           system-config-printer
 Summary:        A printer administration tool
-Version:        1.1.17
-Release:        %mkrel 2
+Version:        1.1.92
+Release:        %mkrel 1
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -21,7 +21,7 @@ Source2:        system-config-printer.console
 Source3:        po-mdv.tar.bz2
 Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
-Patch2:         system-config-printer-1.1.17-mdv_custom-system-config-printer.patch
+Patch2:         system-config-printer-1.1.91-mdv_custom-system-config-printer.patch
 Patch3:         system-config-printer-1.1.17-start-applet.patch
 # Ubuntu patches
 # use hpcups instead of hpijs for HP printers, like in
@@ -85,16 +85,15 @@ the user to configure a CUPS print server.
 %{_bindir}/%{name}
 %{_sbindir}/%{name}
 %{_bindir}/%{name}-applet
-%{_bindir}/my-default-printer
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/*.py*
 %{_datadir}/%{name}/troubleshoot
-%{_datadir}/%{name}/glade/*.glade
+%{_datadir}/%{name}/ui/*.glade
 %{_datadir}/%{name}/icons
 %{_datadir}/applications/system-config-printer.desktop
 %{_datadir}/applications/manage-print-jobs.desktop
-%{_datadir}/applications/my-default-printer.desktop
 %{_sysconfdir}/xdg/autostart/print-applet.desktop
+%config(noreplace) %{_sysconfdir}/dbus-1/system.d/printerdriversinstaller.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
 %{_mandir}/man1/*
