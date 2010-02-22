@@ -72,6 +72,7 @@ Requires:       hplip-model-data
 # printerdrake used to do.
 Requires:       nmap
 %endif
+Requires:       cups
 Conflicts:      kdeutils4-printer-applet
 Suggests:       samba-client
 
