@@ -45,6 +45,7 @@ BuildRequires:  libusb-devel
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
 Provides:       printerdrake
+Requires:       usermode >= 1.94
 Requires:       pygtk2 >= 2.4.0
 Requires:       pygtk2.0-libglade
 Requires:       python-gobject
@@ -82,6 +83,7 @@ the user to configure a CUPS print server.
 %defattr(-,root,root)
 %doc ChangeLog README
 %{_bindir}/%{name}
+%{_sbindir}/%{name}
 %{_bindir}/%{name}-applet
 %{_bindir}/my-default-printer
 %dir %{_datadir}/%{name}
@@ -93,6 +95,8 @@ the user to configure a CUPS print server.
 %{_datadir}/applications/manage-print-jobs.desktop
 %{_datadir}/applications/my-default-printer.desktop
 %{_sysconfdir}/xdg/autostart/print-applet.desktop
+%config(noreplace) %{_sysconfdir}/pam.d/%{name}
+%config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
 %{_mandir}/man1/*
 
 #---------------------------------------------------------------------
@@ -187,6 +191,15 @@ popd
 %{__mkdir_p} %buildroot%{_localstatedir}/run/udev-configure-printer
 touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
 %endif
+
+mkdir -p %buildroot%{_bindir}
+mkdir -p %buildroot%{_sbindir}
+mkdir -p %buildroot%{_sysconfdir}/pam.d
+mkdir -p %buildroot%{_sysconfdir}/security/console.apps
+install -p -m0644 %{SOURCE1} %buildroot%{_sysconfdir}/pam.d/%{name}
+install -p -m0644 %{SOURCE2} %buildroot%{_sysconfdir}/security/console.apps/%{name}
+mv %buildroot%{_bindir}/%{name} %buildroot%{_sbindir}/%{name}
+ln -s consolehelper %buildroot%{_bindir}/%{name}
 
 %find_lang system-config-printer
 
