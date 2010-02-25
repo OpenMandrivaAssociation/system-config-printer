@@ -5,7 +5,7 @@
 %endif
 
 # needs porting of Mandriva specific features from hal-cups-utils to s-c-p-udev
-%define         obsolete_hal_cups_utils 0
+%define         obsolete_hal_cups_utils 1
 
 Name:           system-config-printer
 Summary:        A printer administration tool
@@ -170,6 +170,7 @@ the configuration tool.
 %{python_sitelib}/cupshelpers/cupshelpers.py*
 %{python_sitelib}/cupshelpers/openprinting.py*
 %{python_sitelib}/cupshelpers/ppds.py*
+%{_libdir}/cups/backend/mdv_backend
 %{python_sitelib}/*.egg-info
 
 #--------------------------------------------------------------------
