@@ -235,9 +235,6 @@ touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
 %{__mkdir_p} %{buildroot}%{_libdir}/cups/backend
 cp -f %{SOURCE6} %{buildroot}%{_libdir}/cups/backend
 
-pushd %{buildroot}%{py_platsitedir}
-python -m compileall .
-popd
 %endif
 
 mkdir -p %buildroot%{_bindir}
