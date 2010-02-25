@@ -15,10 +15,13 @@ Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
-Source0:        http://cyberelk.net/tim/data/system-config-printer/1.1/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.xz
+Source0:        http://cyberelk.net/tim/data/system-config-printer/1.2/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.xz
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
 Source3:        po-mdv.tar.bz2
+Source4:        mdv_printer_custom.py
+Source5:        hp-makeuri-mdv.c
+Source6:        mdv_backend
 Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
 Patch2:         system-config-printer-1.1.91-mdv_custom-system-config-printer.patch
@@ -26,10 +29,10 @@ Patch3:         system-config-printer-1.1.17-start-applet.patch
 # Ubuntu patches
 # use hpcups instead of hpijs for HP printers, like in
 # previous versions. hpijs is obsolete and hpcup is mature now
-Patch101:	50_give-priority-to-hpcups.patch
+Patch101:  50_give-priority-to-hpcups.patch
 # when comparing usb uris, deal with the difference between the obsolete
 # usblp and the new libusb back-end
-Patch102:	67_match-usb-uris-of-usblp-and-libusb.patch
+Patch102:  67_match-usb-uris-of-usblp-and-libusb.patch
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -41,11 +44,11 @@ BuildRequires:  docbook-style-xsl
 %if %obsolete_hal_cups_utils
 BuildRequires:  udev-devel
 BuildRequires:  libusb-devel
+BuildRequires:  libhpip-devel
 %endif
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
 Provides:       printerdrake
-Requires:       usermode >= 1.94
 Requires:       pygtk2 >= 2.4.0
 Requires:       pygtk2.0-libglade
 Requires:       python-gobject
@@ -72,7 +75,6 @@ Requires:       hplip-model-data
 # printerdrake used to do.
 Requires:       nmap
 %endif
-Requires:       cups
 Conflicts:      kdeutils4-printer-applet
 Suggests:       samba-client
 
@@ -94,7 +96,6 @@ the user to configure a CUPS print server.
 %{_datadir}/applications/system-config-printer.desktop
 %{_datadir}/applications/manage-print-jobs.desktop
 %{_sysconfdir}/xdg/autostart/print-applet.desktop
-%config(noreplace) %{_sysconfdir}/dbus-1/system.d/printerdriversinstaller.conf
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
 %{_mandir}/man1/*
@@ -111,9 +112,37 @@ Obsoletes: hal-cups-utils <= 0.6.20
 The udev rules and helper programs for automatically configuring USB
 printers.
 
+%post
+# disable old printer detection system
+if [ -f /etc/sysconfig/printing ]; then
+    if grep -q ^AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
+        sed -i 's/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=.*/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no/g' /etc/sysconfig/printing
+    else
+        echo AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
+    fi
+    if grep -q ^ENABLE_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
+        sed -i 's/ENABLE_QUEUES_ON_PRINTER_CONNECTED=.*/ENABLE_QUEUES_ON_PRINTER_CONNECTED=no/g' /etc/sysconfig/printing
+    else
+        echo ENABLE_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
+    fi
+else
+    echo AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
+    echo ENABLE_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
+fi
+
+%postun
+# enable old printer detection system
+if [ -f /etc/sysconfig/printing ]; then
+    if grep -q ^AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
+        sed -i 's/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=.*/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=yes/g' /etc/sysconfig/printing
+    fi
+    if grep -q ^ENABLE_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
+        sed -i 's/ENABLE_QUEUES_ON_PRINTER_CONNECTED=.*/ENABLE_QUEUES_ON_PRINTER_CONNECTED=yes/g' /etc/sysconfig/printing
+    fi
+fi
+
 %files udev
 %defattr(-,root,root,-)
-%{_sysconfdir}/udev/rules.d/*.rules
 /lib/udev/*
 %dir %{_localstatedir}/run/udev-configure-printer
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
@@ -134,6 +163,7 @@ the configuration tool.
 %files libs -f system-config-printer.lang
 %defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/newprinternotification.conf
+%config(noreplace) %{_sysconfdir}/dbus-1/system.d/printerdriversinstaller.conf
 %dir %{python_sitelib}/cupshelpers
 %{python_sitelib}/cupshelpers/__init__.py*
 %{python_sitelib}/cupshelpers/cupshelpers.py*
@@ -172,12 +202,22 @@ popd
 ./configure --prefix=%{_prefix} \
 	--sysconfdir=%{_sysconfdir} \
 %if %obsolete_hal_cups_utils
-	--with-udev-rules \
+	--with-udev-rules
 %endif
-	--with-polkit-1
-%make
 
+%make
+%if %obsolete_hal_cups_utils
+# (salem) this hack avoids requiring hplip
+gcc %{SOURCE5} -o hp-makeuri-mdv -lhpmud
+%endif
 %install
+%if %obsolete_hal_cups_utils
+mkdir -p %{buildroot}%{_mozillaextpath}
+mkdir -p %{buildroot}%{py_platsitedir}
+mkdir -p %{buildroot}%{_bindir}
+cp -f %{SOURCE4} %{buildroot}%{py_platsitedir}
+cp -f hp-makeuri-mdv %{buildroot}%{_bindir}
+
 rm -rf %buildroot
 make DESTDIR=%buildroot install
 
@@ -187,9 +227,14 @@ pushd %{buildroot}%{_datadir}/%{name}
 python -m compileall .
 popd
 
-%if %obsolete_hal_cups_utils
 %{__mkdir_p} %buildroot%{_localstatedir}/run/udev-configure-printer
 touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
+%{__mkdir_p} %{buildroot}%{_libdir}/cups/backend
+cp -f %{SOURCE6} %{buildroot}%{_libdir}/cups/backend
+
+pushd %{buildroot}%{py_platsitedir}
+python -m compileall .
+popd
 %endif
 
 mkdir -p %buildroot%{_bindir}
@@ -200,6 +245,7 @@ install -p -m0644 %{SOURCE1} %buildroot%{_sysconfdir}/pam.d/%{name}
 install -p -m0644 %{SOURCE2} %buildroot%{_sysconfdir}/security/console.apps/%{name}
 mv %buildroot%{_bindir}/%{name} %buildroot%{_sbindir}/%{name}
 ln -s consolehelper %buildroot%{_bindir}/%{name}
+
 
 %find_lang system-config-printer
 
