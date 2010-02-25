@@ -26,6 +26,7 @@ Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
 Patch2:         system-config-printer-1.1.91-mdv_custom-system-config-printer.patch
 Patch3:         system-config-printer-1.1.17-start-applet.patch
+Patch4:         system-config-printer-1.1.92-try-to-start-cups.patch
 # Ubuntu patches
 # use hpcups instead of hpijs for HP printers, like in
 # previous versions. hpijs is obsolete and hpcup is mature now
@@ -179,6 +180,7 @@ the configuration tool.
 %patch1 -p1 -b .mdv_custom-embedded-window
 %patch2 -p0 -b .mdv_custom-system-config-printer
 %patch3 -p0 -b .start_applet
+%patch4 -p0 -b .start_cups
 %patch101 -p1 -b .hpcupsprio
 %patch102 -p1 -b .libusb
 
