@@ -10,7 +10,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.93
-Release:        %mkrel 1
+Release:        %mkrel 2
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -88,6 +88,7 @@ the user to configure a CUPS print server.
 %doc ChangeLog README
 %{_bindir}/%{name}
 %{_sbindir}/%{name}
+%{_bindir}/hp-makeuri-mdv
 %{_bindir}/%{name}-applet
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/*.py*
@@ -171,6 +172,7 @@ the configuration tool.
 %{python_sitelib}/cupshelpers/openprinting.py*
 %{python_sitelib}/cupshelpers/ppds.py*
 %{_libdir}/cups/backend/mdv_backend
+%{py_platsitedir}/mdv_printer_custom.py*
 %{python_sitelib}/*.egg-info
 
 #--------------------------------------------------------------------
@@ -214,19 +216,22 @@ popd
 gcc %{SOURCE5} -o hp-makeuri-mdv -lhpmud
 %endif
 %install
+rm -rf %buildroot
+make DESTDIR=%buildroot install
+
 %if %obsolete_hal_cups_utils
 mkdir -p %{buildroot}%{_mozillaextpath}
 mkdir -p %{buildroot}%{py_platsitedir}
 mkdir -p %{buildroot}%{_bindir}
-cp -f %{SOURCE4} %{buildroot}%{py_platsitedir}
 cp -f hp-makeuri-mdv %{buildroot}%{_bindir}
-
-rm -rf %buildroot
-make DESTDIR=%buildroot install
-
 # Make sure pyc files are generated, otherwise we can get
 # difficult to debug problems
 pushd %{buildroot}%{_datadir}/%{name}
+python -m compileall .
+popd
+mkdir -p %{buildroot}%{py_platsitedir}
+cp -fv %{SOURCE4} %{buildroot}%{py_platsitedir}
+pushd %{buildroot}%{py_platsitedir}
 python -m compileall .
 popd
 
