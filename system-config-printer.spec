@@ -47,6 +47,7 @@ BuildRequires:  docbook-style-xsl
 BuildRequires:  udev-devel
 BuildRequires:  libusb-devel
 BuildRequires:  libhpip-devel
+BuildRequires:  dbus-devel
 %endif
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
