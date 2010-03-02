@@ -48,6 +48,7 @@ BuildRequires:  udev-devel
 BuildRequires:  libusb-devel
 BuildRequires:  libhpip-devel
 BuildRequires:  dbus-devel
+BuildRequires:  dbus-glib-devel
 %endif
 Obsoletes:      desktop-printing
 Obsoletes:      printerdrake
