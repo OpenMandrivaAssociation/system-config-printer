@@ -213,7 +213,7 @@ popd
 	--with-udev-rules
 %endif
 
-%make
+make
 %if %obsolete_hal_cups_utils
 # (salem) this hack avoids requiring hplip
 gcc %{SOURCE5} -o hp-makeuri-mdv -lhpmud
