@@ -10,7 +10,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.1.93
-Release:        %mkrel 3
+Release:        %mkrel 4
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -35,6 +35,12 @@ Patch101:  50_give-priority-to-hpcups.patch
 # when comparing usb uris, deal with the difference between the obsolete
 # usblp and the new libusb back-end
 Patch102:  67_match-usb-uris-of-usblp-and-libusb.patch
+# Fedora patches
+Patch200: system-config-printer-lowercase-mfg-mdl.patch
+Patch201: system-config-printer-import-gobject.patch
+Patch202: system-config-printer-icon-name.patch
+#Patch204: system-config-printer-cupsconnection-dealloc.patch
+
 BuildRequires:  cups-devel >= 1.2
 BuildRequires:  python-devel >= 2.4
 BuildRequires:  desktop-file-utils >= 0.2.92
@@ -190,6 +196,13 @@ the configuration tool.
 %patch5 -p0 -b .install_cups
 %patch101 -p1 -b .hpcupsprio
 %patch102 -p1 -b .libusb
+# Convert InstallPrinterDriver requests to lower-case.
+%patch200 -p1 -b .lowercase-mfg-mdl
+# Import gobject in gtkspinner.
+%patch201 -p1 -b .import-gobject
+# Use 'printer' icon name instead of 'gnome-dev-printer'.
+%patch202 -p1 -b .icon-name
+
 
 # update mdv custom translation
 tar xvjf %{SOURCE3}
