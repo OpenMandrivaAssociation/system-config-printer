@@ -82,6 +82,7 @@ Requires:       hplip-model-data
 # nmap is required to scan the network, just like 
 # printerdrake used to do.
 Requires:       nmap
+Requires:       python-smbc
 %endif
 Conflicts:      kdeutils4-printer-applet
 Suggests:       samba-client
