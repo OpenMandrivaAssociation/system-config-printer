@@ -118,7 +118,7 @@ Summary: Rules for udev for automatic configuration of USB printers
 Group:    System/Configuration/Hardware
 Requires: system-config-printer-libs = %{version}-%{release}
 Obsoletes: hal-cups-utils <= 0.6.20
-Conflicts: cups <= 1.4.2-5
+Conflicts: cups < 1.4.2-6
 
 %description udev
 The udev rules and helper programs for automatically configuring USB
