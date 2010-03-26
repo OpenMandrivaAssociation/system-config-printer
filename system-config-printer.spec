@@ -10,7 +10,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.2.0
-Release:        %mkrel 2
+Release:        %mkrel 3
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -22,12 +22,13 @@ Source3:        po-mdv.tar.bz2
 Source4:        mdv_printer_custom.py
 Source5:        hp-makeuri-mdv.c
 Source6:        mdv_backend
+# Let printers have an ACL allowing rw for user lp, as our CUPS runs backends as lp:sys (bug 49407)
+Source7:        69-printers_lp_user_fix.rules
 Patch0:         system-config-printer-1.1.12-mdv_custom-applet.patch
 Patch1:         system-config-printer-1.1.12-mdv_custom-embedded_window.patch
 Patch2:         system-config-printer-1.1.91-mdv_custom-system-config-printer.patch
 Patch3:         system-config-printer-1.1.17-start-applet.patch
-Patch4:         system-config-printer-1.1.92-try-to-start-cups.patch
-Patch5:         system-config-printer-1.1.93-udev-install-cups-if-needed.patch
+Patch4:         system-config-printer-1.2.0-udev-configure-printer-mdv.patch
 # Ubuntu patches
 # use hpcups instead of hpijs for HP printers, like in
 # previous versions. hpijs is obsolete and hpcup is mature now
@@ -117,6 +118,7 @@ Summary: Rules for udev for automatic configuration of USB printers
 Group:    System/Configuration/Hardware
 Requires: system-config-printer-libs = %{version}-%{release}
 Obsoletes: hal-cups-utils <= 0.6.20
+Conflicts: cups <= 1.4.2-5
 
 %description udev
 The udev rules and helper programs for automatically configuring USB
@@ -156,6 +158,7 @@ fi
 /lib/udev/*
 %dir %{_localstatedir}/run/udev-configure-printer
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
+%{_sysconfdir}/udev/rules.d/*
 %endif #obsolete_hal_cups_utils
 
 #---------------------------------------------------------------------
@@ -191,8 +194,7 @@ the configuration tool.
 %patch1 -p1 -b .mdv_custom-embedded-window
 %patch2 -p0 -b .mdv_custom-system-config-printer
 %patch3 -p0 -b .start_applet
-%patch4 -p0 -b .start_cups
-%patch5 -p0 -b .install_cups
+%patch4 -p1 -b .udev-configue-printer-mdv
 %patch101 -p1 -b .hpcupsprio
 %patch102 -p1 -b .libusb
 # Convert InstallPrinterDriver requests to lower-case.
@@ -251,6 +253,12 @@ popd
 touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
 %{__mkdir_p} %{buildroot}%{_libdir}/cups/backend
 cp -f %{SOURCE6} %{buildroot}%{_libdir}/cups/backend
+
+# Install udev rules for letting backends access the printer devices.  Once
+# CUPS runs backends as group 'lp', instead of 'sys, we may remove this.
+mkdir -p %{buildroot}%{_sysconfdir}/udev/rules.d
+install -m 644 %{SOURCE7} %{buildroot}%{_sysconfdir}/udev/rules.d/
+
 
 %endif
 
