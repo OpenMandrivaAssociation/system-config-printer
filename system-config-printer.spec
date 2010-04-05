@@ -10,7 +10,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.2.0
-Release:        %mkrel 6
+Release:        %mkrel 7
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -30,6 +30,7 @@ Patch2:         system-config-printer-1.1.91-mdv_custom-system-config-printer.pa
 Patch3:         system-config-printer-1.1.17-start-applet.patch
 Patch4:         system-config-printer-1.2.0-udev-configure-printer-mdv.patch
 Patch5:         system-config-printer-1.2.0-udev-configure-add-debug.patch
+Patch6:         system-config-printer-git.patch
 # Ubuntu patches
 # use hpcups instead of hpijs for HP printers, like in
 # previous versions. hpijs is obsolete and hpcup is mature now
@@ -193,10 +194,11 @@ the configuration tool.
 %setup -q 
 %patch0 -p1 -b .mdv_custom-applet
 %patch1 -p1 -b .mdv_custom-embedded-window
-%patch2 -p0 -b .mdv_custom-system-config-printer
+%patch2 -p1 -b .mdv_custom-system-config-printer
 %patch3 -p0 -b .start_applet
 %patch4 -p1 -b .udev-configue-printer-mdv
-%patch5 -p0 -b .add_debug
+#%patch5 -p0 -b .add_debug
+%patch6 -p1 -b .git
 %patch101 -p1 -b .hpcupsprio
 %patch102 -p1 -b .libusb
 # Convert InstallPrinterDriver requests to lower-case.
