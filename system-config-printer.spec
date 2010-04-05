@@ -10,7 +10,7 @@
 Name:           system-config-printer
 Summary:        A printer administration tool
 Version:        1.2.0
-Release:        %mkrel 7
+Release:        %mkrel 8
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
@@ -197,7 +197,7 @@ the configuration tool.
 %patch2 -p1 -b .mdv_custom-system-config-printer
 %patch3 -p0 -b .start_applet
 %patch4 -p1 -b .udev-configue-printer-mdv
-#%patch5 -p0 -b .add_debug
+%patch5 -p0 -b .add_debug
 %patch6 -p1 -b .git
 %patch101 -p1 -b .hpcupsprio
 %patch102 -p1 -b .libusb
