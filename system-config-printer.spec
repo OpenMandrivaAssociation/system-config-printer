@@ -14,7 +14,6 @@ Release:        %mkrel 14
 Url:            http://cyberelk.net/tim/software/system-config-printer/
 License:        LGPLv2+
 Group:          System/Configuration/Printing
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 Source0:        http://cyberelk.net/tim/data/system-config-printer/1.2/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.xz
 Source1:        system-config-printer.pam
 Source2:        system-config-printer.console
@@ -76,7 +75,6 @@ Requires:       gnome-icon-theme
 Requires:       gnome-python
 Requires:       virtual-notification-daemon
 Requires:       python-cups
-Requires:       python-rhpl
 Requires:       python-dbus
 Requires:       python-notify
 %if %obsolete_hal_cups_utils
@@ -94,7 +92,6 @@ system-config-printer is a graphical user interface that allows
 the user to configure a CUPS print server.
 
 %files
-%defattr(-,root,root)
 %doc ChangeLog README
 %{_bindir}/%{name}
 %{_sbindir}/%{name}
@@ -155,7 +152,6 @@ if [ -f /etc/sysconfig/printing ]; then
 fi
 
 %files udev
-%defattr(-,root,root,-)
 /lib/udev/*
 %dir %{_localstatedir}/run/udev-configure-printer
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
@@ -175,7 +171,6 @@ The common code used by both the graphical and non-graphical parts of
 the configuration tool.
 
 %files libs -f system-config-printer.lang
-%defattr(-,root,root,-)
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/newprinternotification.conf
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/printerdriversinstaller.conf
 %dir %{python_sitelib}/cupshelpers
@@ -232,7 +227,6 @@ gcc %{SOURCE5} -o hp-makeuri-mdv -lhpmud
 %endif
 
 %install
-rm -rf %buildroot
 %makeinstall_std
 
 %if %obsolete_hal_cups_utils
@@ -276,5 +270,3 @@ ln -s consolehelper %buildroot%{_bindir}/%{name}
 
 %find_lang system-config-printer
 
-%clean
-%{__rm} -rf "%{buildroot}"
