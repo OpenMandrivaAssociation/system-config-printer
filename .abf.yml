@@ -1,0 +1,8 @@
+sources:
+  "69-printers_lp_user_fix.rules:"	fe595771810a2e9d09a322c260fbdc4302681ec6
+  "hp-makeuri-mdv.c:"	8cad7ff70d8bcc8aba92c9aa6b49d0d2147cb3c8
+  "mdv_backend:"	6b4cd139a33385586cef832a5ea8783aca0dff14
+  "mdv_printer_custom.py:"	8070058969134d03075a84fa9f8891add2912d9f
+  "po-mdv.tar.bz2:"	8cc66ae7bb5b0d71725b248ed5a175fedfb03da0
+  "system-config-printer.console:"	e16556801750096168c338d772bb1b22276345f2
+  "system-config-printer.pam:"	e8ab5619510d079170be11f36d87395baac6341b

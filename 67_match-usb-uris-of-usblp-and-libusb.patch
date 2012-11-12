@@ -1,0 +1,86 @@
+diff -Nur -x '*.orig' -x '*~' system-config-printer-1.1.12+git20090826/udev/udev-configure-printer.c system-config-printer-1.1.12+git20090826.new/udev/udev-configure-printer.c
+--- system-config-printer-1.1.12+git20090826/udev/udev-configure-printer.c	2009-08-26 17:44:35.000000000 +0200
++++ system-config-printer-1.1.12+git20090826.new/udev/udev-configure-printer.c	2009-10-13 23:02:58.000000000 +0200
+@@ -742,6 +742,8 @@
+   ippAddStrings (request, IPP_TAG_OPERATION, IPP_TAG_NAME, "exclude-schemes",
+ 		 sizeof (exclude_schemes) / sizeof(exclude_schemes[0]),
+ 		 NULL, exclude_schemes);
++  ippAddInteger (request, IPP_TAG_OPERATION, IPP_TAG_INTEGER, "timeout",
++                 2);
+ 
+   answer = cupsDoRequestOrDie (cups, request, "/");
+   httpClose (cups);
+@@ -1036,7 +1038,8 @@
+       const char *this_device_uri = NULL;
+       const char *printer_state_message = NULL;
+       int state = 0;
+-      size_t i;
++      size_t i, l;
++      const char *ps1, *ps2, *pi1, *pi2;
+ 
+       while (attr && attr->group_tag != IPP_TAG_PRINTER)
+ 	attr = attr->next;
+@@ -1061,20 +1064,50 @@
+ 	    state = attr->values[0].integer;
+ 	}
+ 
++      pi1 = strstr (this_device_uri, "interface=");
++      ps1 = strstr (this_device_uri, "serial=");
+       for (i = 0; i < device_uris->n_uris; i++)
+-	if (!strcmp (device_uris->uri[i], this_device_uri))
+-	  {
+-	    matched++;
+-	    if (((flags & MATCH_ONLY_DISABLED) &&
+-		 state == IPP_PRINTER_STOPPED &&
+-		 !strcmp (printer_state_message, DISABLED_REASON)) ||
+-		(flags & MATCH_ONLY_DISABLED) == 0)
+-	      {
+-		syslog (LOG_DEBUG ,"Queue %s has matching device URI",
+-			this_printer_uri);
+-		(*fn) (this_printer_uri, context);
+-	      }
+-	  }
++	{
++	  /* As for the same device different URIs can come out when the
++	     device is accessed via the usblp kernel module or via low-
++	     level USB (libusb) we cannot simply compare URIs, must
++	     consider also URIs as equal if one has an "interface"
++	     or "serial" attribute and the other not. If both have
++	     the attribute it must naturally match. We check which attributes 
++             are there and this way determine up to which length the two URIs 
++             must match. Here we can assume that if a URI has an "interface"
++	  `  attribute it has also a "serial" attribute, as this URI is
++	     an URI obtained via libusb and these always have a "serial"
++	     attribute. usblp-based URIs never have an "interface"
++	     attribute.*/
++	  pi2 = strstr (device_uris->uri[i], "interface=");
++	  ps2 = strstr (device_uris->uri[i], "serial=");
++	  if (pi1 && !pi2)
++	    l = strlen(device_uris->uri[i]);
++	  else if (!pi1 && pi2)
++	    l = strlen(this_device_uri);
++	  else if (ps1 && !ps2)
++	    l = strlen(device_uris->uri[i]);
++	  else if (!ps1 && ps2)
++	    l = strlen(this_device_uri);
++	  else if (strlen(this_device_uri) > strlen(device_uris->uri[i]))
++	    l = strlen(this_device_uri);
++	  else
++	    l = strlen(device_uris->uri[i]);		     
++	  if (!strncmp (device_uris->uri[i], this_device_uri, l))
++	    {
++	      matched++;
++	      if (((flags & MATCH_ONLY_DISABLED) &&
++		   state == IPP_PRINTER_STOPPED &&
++		   !strcmp (printer_state_message, DISABLED_REASON)) ||
++		  (flags & MATCH_ONLY_DISABLED) == 0)
++		{
++		  syslog (LOG_DEBUG ,"Queue %s has matching device URI",
++			  this_printer_uri);
++		  (*fn) (this_printer_uri, context);
++		}
++	    }
++	}
+ 
+       if (!attr)
+ 	break;

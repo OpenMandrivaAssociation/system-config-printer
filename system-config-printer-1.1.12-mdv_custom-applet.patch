@@ -1,0 +1,234 @@
+diff -p -up system-config-printer-1.2.0/applet.py.orig system-config-printer-1.2.0/applet.py
+--- system-config-printer-1.2.0/applet.py.orig	2010-03-16 15:21:48.000000000 -0300
++++ system-config-printer-1.2.0/applet.py	2010-04-12 17:25:06.000000000 -0300
+@@ -17,6 +17,8 @@
+ ## along with this program; if not, write to the Free Software
+ ## Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
++import mdv_printer_custom
++import os
+ import cups
+ cups.require ("1.9.42")
+ import sys
+@@ -105,6 +107,174 @@ class NewPrinterNotification(dbus.servic
+ 
+         return False
+ 
++    @dbus.service.method(PDS_IFACE, in_signature='', out_signature='b')
++    def InstallSpooler (self):
++        import os
++        packages2install = ['task-printing-server', 'hplip-model-data']
++        """,
++        'cups',
++        'foomatic-db',
++        'foomatic-db-engine',
++        'foomatic-db-hpijs',
++        'foomatic-filters',
++        'gutenprint-cups',
++        'gutenprint-foomatic',
++        'hplip-model-data']
++        """
++        packages = []
++        for package in packages2install:
++            if not mdv_printer_custom.is_installed_packages([package]):
++                packages.append(package)
++
++        # spooler installed if packages is empty
++        if packages.__len__() == 0:
++            return True
++
++        title = _("Installing Printing System..")
++        text = _("Installing Printing System. Please wait...")
++        n = pynotify.Notification (title, text, 'printer')
++        n.set_urgency (pynotify.URGENCY_NORMAL)
++        n.show()
++
++        if mdv_printer_custom.install_packages(packages):
++            return True
++        else:
++            return False
++
++    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='')
++    def InstallingPrinter (self, make, model):
++        printer = make+" "+model
++        title = _("Installing printer")
++        text = _("Installing `%s'. Please wait...") % (printer)
++        n = pynotify.Notification (title, text, 'printer')
++        n.set_urgency (pynotify.URGENCY_NORMAL)
++        n.show()
++
++    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='')
++    def PrinterDisabled (self, make, model):
++        printer = make+" "+model
++        title = _("Printer disabled")
++        text = _("The printer `%s' is disabled") % (printer)
++        n = pynotify.Notification (title, text, 'printer')
++        n.set_urgency (pynotify.URGENCY_CRITICAL)
++        n.show()
++
++    @dbus.service.method(PDS_IFACE, in_signature='', out_signature='')
++    def InstallSpoolerFailed (self):
++        title = _("Installation failed")
++        text = _("The printing system installation has failed")
++        n = pynotify.Notification (title, text, 'printer')
++        n.set_urgency (pynotify.URGENCY_CRITICAL)
++        n.set_timeout (pynotify.EXPIRES_NEVER)
++        n.show()
++
++    @dbus.service.method(PDS_IFACE, in_signature='', out_signature='')
++    def SpoolerStartFailed (self):
++        title = _("Printing system failed")
++        text = _("It was not possible to start the printing system")
++        n = pynotify.Notification (title, text, 'printer')
++        n.set_urgency (pynotify.URGENCY_CRITICAL)
++        n.set_timeout (pynotify.EXPIRES_NEVER)
++        n.show()
++
++    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='b')
++    def PrinterFirmwareDownload (self, make, model):
++        import gtk
++        printer = make+" "+model
++        title = _("Firmware Required")
++        text = _("The printer `%s' requires firmware") % (printer)
++        n = pynotify.Notification (title, text, 'printer')
++        n.set_urgency (pynotify.URGENCY_NORMAL)
++        n.show()
++        if mdv_printer_custom.make2simplename(make) == "hp":
++            os.system("hp-setup")
++            return os.system("hp-firmware -n")
++        return False
++
++    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='')
++    def PrinterEnabled (self, make, model):
++        #self.wake_up ()
++        """Hack to make kde4 system tray show the icon"""
++        #viewer.set_special_statusicon (SEARCHING_ICON)
++        #viewer.unset_special_statusicon ()
++
++        printer = make+" "+model
++        title = _("Printer enabled")
++        text = _("The printer `%s' is enabled") % (printer)
++        n = pynotify.Notification (title, text, 'printer')
++        n.set_urgency (pynotify.URGENCY_NORMAL)
++        n.show()
++
++    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='')
++    def MissingDriver (self, make, model):
++        printer = make+" "+model
++        title = _("Missing printer driver")
++        text = _("It is not possible to install `%s' without the right driver") % (printer)
++        n = pynotify.Notification (title, text, 'printer')
++        n.set_urgency (pynotify.URGENCY_CRITICAL)
++        n.set_timeout (pynotify.EXPIRES_NEVER)
++        n.show()
++
++    @dbus.service.method(PDS_IFACE, in_signature='ssas', out_signature='b')
++    def InstallDriver (self, make, model, packages):
++        import os
++        printer = make+" "+model
++        title = _("Install printer driver")
++        text = _("`%s' requires driver installation") % (printer)
++        n = pynotify.Notification (title, text, 'printer')
++        n.set_urgency (pynotify.URGENCY_NORMAL)
++        n.show()
++        if mdv_printer_custom.install_packages(packages):
++             return True
++        else:
++             return False
++
++    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='b')
++    def CheckAndInstallDrivers (self, make, model):
++        import os
++        packages = mdv_printer_custom.guess_driver_packages(make,model);
++        if packages:
++            if mdv_printer_custom.is_installed_packages(packages):
++                return True
++            else:
++                printer = make+" "+model
++                title = _("Install printer driver")
++                text = _("`%s' requires driver installation") % (printer)
++                n = pynotify.Notification (title, text, 'printer')
++                n.set_urgency (pynotify.URGENCY_NORMAL)
++                n.show()
++                if mdv_printer_custom.install_packages(packages):
++                    return True
++                else:
++                    return False
++        return True
++
++    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='b')
++    def CheckInstalledDrivers (self, make, model):
++        import os
++        packages = mdv_printer_custom.guess_driver_packages(make,model);
++        if packages:
++            if mdv_printer_custom.is_installed_packages(packages):
++                return True
++            else:
++                return False
++        return True
++
++    @dbus.service.method(PDS_IFACE, in_signature='', out_signature='b')
++    def CheckInstalledSpooler (self):
++        import os
++        packages2install = ['task-printing-server', 'hplip-model-data']
++        packages = []
++        for package in packages2install:
++            if not mdv_printer_custom.is_installed_packages([package]):
++                packages.append(package)
++
++        # spooler installed if packages is empty
++        if packages.__len__() == 0:
++            return True
++        else:
++            return False
++
+     @dbus.service.method(PDS_IFACE, in_signature='isssss', out_signature='')
+     def NewPrinter (self, status, name, mfg, mdl, des, cmd):
+         global viewer
+@@ -173,7 +343,7 @@ class NewPrinterNotification(dbus.servic
+                 pkgs = reduce (lambda x,y: x + ", " + y, missing_pkgs)
+                 title = _("Install printer driver")
+                 text = _("`%s' requires driver installation: %s.") % (name, pkgs)
+-                n = pynotify.Notification (title, text)
++                n = pynotify.Notification (title, text, 'printer')
+                 import installpackage
+                 if "actions" in pynotify.get_server_caps():
+                     try:
+@@ -192,11 +362,12 @@ class NewPrinterNotification(dbus.servic
+                                                             missing_pkgs[0])
+                     except:
+                         pass
++                n.show()
+ 
+             elif status == self.STATUS_SUCCESS:
+                 devid = "MFG:%s;MDL:%s;DES:%s;CMD:%s;" % (mfg, mdl, des, cmd)
+                 text = _("`%s' is ready for printing.") % name
+-                n = pynotify.Notification (title, text)
++                n = pynotify.Notification (title, text, 'printer')
+                 if "actions" in pynotify.get_server_caps():
+                     n.set_urgency (pynotify.URGENCY_NORMAL)
+                     n.add_action ("test-page", _("Print test page"),
+@@ -204,6 +375,7 @@ class NewPrinterNotification(dbus.servic
+                                       self.print_test_page (x, y, name, devid))
+                     n.add_action ("configure", _("Configure"),
+                                   lambda x, y: self.configure (x, y, name))
++                n.show()
+             else: # Model mismatch
+                 devid = "MFG:%s;MDL:%s;DES:%s;CMD:%s;" % (mfg, mdl, des, cmd)
+                 text = (_("`%s' has been added, using the `%s' driver.") %
+@@ -222,6 +394,7 @@ class NewPrinterNotification(dbus.servic
+                     self.run_config_tool (["--configure-printer",
+                                            name, "--no-focus-on-map"])
+ 
++        n.show()
+         viewer.notify_new_printer (name, n)
+         # Set the icon back how it was.
+         self.timeout_ready ()
+@@ -301,6 +474,7 @@ viewer = None
+ 
+ if __name__ == '__main__':
+     import sys, getopt
++
+     try:
+         opts, args = getopt.gnu_getopt (sys.argv[1:], '',
+                                         ['no-tray-icon',
