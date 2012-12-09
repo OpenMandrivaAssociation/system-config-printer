@@ -1,16 +1,20 @@
-diff -p -up system-config-printer-1.2.0/applet.py.orig system-config-printer-1.2.0/applet.py
---- system-config-printer-1.2.0/applet.py.orig	2010-03-16 15:21:48.000000000 -0300
-+++ system-config-printer-1.2.0/applet.py	2010-04-12 17:25:06.000000000 -0300
-@@ -17,6 +17,8 @@
+diff --git a/applet.py b/applet.py
+index 221291a..e665b7a 100644
+--- a/applet.py
+++ b/applet.py
+@@ -17,6 +17,11 @@
  ## along with this program; if not, write to the Free Software
- ## Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  
++# Added for Mandriva
 +import mdv_printer_custom
 +import os
++## End added for Mandriva
++
  import cups
  cups.require ("1.9.42")
  import sys
-@@ -105,6 +107,174 @@ class NewPrinterNotification(dbus.servic
+@@ -109,6 +114,174 @@ class NewPrinterNotification(dbus.service.Object):
  
          return False
  
@@ -47,7 +51,6 @@ diff -p -up system-config-printer-1.2.0/applet.py.orig system-config-printer-1.2
 +            return True
 +        else:
 +            return False
-+
 +    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='')
 +    def InstallingPrinter (self, make, model):
 +        printer = make+" "+model
@@ -182,10 +185,11 @@ diff -p -up system-config-printer-1.2.0/applet.py.orig system-config-printer-1.2
 +        else:
 +            return False
 +
++
      @dbus.service.method(PDS_IFACE, in_signature='isssss', out_signature='')
      def NewPrinter (self, status, name, mfg, mdl, des, cmd):
-         global viewer
-@@ -173,7 +343,7 @@ class NewPrinterNotification(dbus.servic
+         if name.find("/") >= 0:
+@@ -173,7 +346,7 @@ class NewPrinterNotification(dbus.service.Object):
                  pkgs = reduce (lambda x,y: x + ", " + y, missing_pkgs)
                  title = _("Install printer driver")
                  text = _("`%s' requires driver installation: %s.") % (name, pkgs)
@@ -194,41 +198,11 @@ diff -p -up system-config-printer-1.2.0/applet.py.orig system-config-printer-1.2
                  import installpackage
                  if "actions" in pynotify.get_server_caps():
                      try:
-@@ -192,11 +362,12 @@ class NewPrinterNotification(dbus.servic
-                                                             missing_pkgs[0])
-                     except:
-                         pass
-+                n.show()
- 
-             elif status == self.STATUS_SUCCESS:
-                 devid = "MFG:%s;MDL:%s;DES:%s;CMD:%s;" % (mfg, mdl, des, cmd)
-                 text = _("`%s' is ready for printing.") % name
--                n = pynotify.Notification (title, text)
-+                n = pynotify.Notification (title, text, 'printer')
-                 if "actions" in pynotify.get_server_caps():
-                     n.set_urgency (pynotify.URGENCY_NORMAL)
-                     n.add_action ("test-page", _("Print test page"),
-@@ -204,6 +375,7 @@ class NewPrinterNotification(dbus.servic
-                                       self.print_test_page (x, y, name, devid))
+@@ -204,6 +377,7 @@ class NewPrinterNotification(dbus.service.Object):
+                                       self.print_test_page (x, y, name))
                      n.add_action ("configure", _("Configure"),
                                    lambda x, y: self.configure (x, y, name))
-+                n.show()
++		    n.show()
              else: # Model mismatch
                  devid = "MFG:%s;MDL:%s;DES:%s;CMD:%s;" % (mfg, mdl, des, cmd)
                  text = (_("`%s' has been added, using the `%s' driver.") %
-@@ -222,6 +394,7 @@ class NewPrinterNotification(dbus.servic
-                     self.run_config_tool (["--configure-printer",
-                                            name, "--no-focus-on-map"])
- 
-+        n.show()
-         viewer.notify_new_printer (name, n)
-         # Set the icon back how it was.
-         self.timeout_ready ()
-@@ -301,6 +474,7 @@ viewer = None
- 
- if __name__ == '__main__':
-     import sys, getopt
-+
-     try:
-         opts, args = getopt.gnu_getopt (sys.argv[1:], '',
-                                         ['no-tray-icon',
