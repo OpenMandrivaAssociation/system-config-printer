@@ -11,7 +11,7 @@
 Name:			system-config-printer
 Summary:		A printer administration tool
 Version:		1.3.12
-Release:		10
+Release:		11
 Url:			http://cyberelk.net/tim/software/system-config-printer/
 License:		LGPLv2+
 Group:			System/Configuration/Printing
@@ -80,7 +80,9 @@ Requires:		python-smbc
 # Why? kdeutils4-printer-applet reqires system-config-printer...
 #Conflicts:      kdeutils4-printer-applet
 Suggests:		samba-client
-Requires:		gnome-python-desktop
+%if %{pygnomekeyring}
+Requires:		gnome-python-gnomekeyring
+%endif
 # Required for CheckUSBPermissions.py
 Requires:		acl
 
