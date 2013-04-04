@@ -65,7 +65,7 @@ Requires:		dbus-x11
 Requires:		system-config-printer-libs = %{version}-%{release}
 Requires:		system-config-printer-udev = %{version}-%{release}
 Requires:		gnome-icon-theme
-Requires:		gnome-python
+Requires:		gnome-python-gnomekeyring
 Requires:		virtual-notification-daemon
 Requires:		python-dbus
 Requires:		python-pyinotify
