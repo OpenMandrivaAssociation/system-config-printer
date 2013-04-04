@@ -11,7 +11,7 @@
 Name:			system-config-printer
 Summary:		A printer administration tool
 Version:		1.3.12
-Release:		11
+Release:		12
 Url:			http://cyberelk.net/tim/software/system-config-printer/
 License:		LGPLv2+
 Group:			System/Configuration/Printing
@@ -23,6 +23,7 @@ Source4:		mdv_printer_custom.py
 #Source5:        hp-makeuri-mdv.c
 #Source6:        mdv_backend
 Source7:		69-printers_lp_user_fix.rules
+Source100:		system-config-printer.rpmlintrc
 #Patch0:         system-config-printer-1.3.4-mdv_custom-applet.patch
 Patch2:			system-config-printer-1.3.3-mdv_custom-system-config-printer.patch
 Patch3:			system-config-printer-1.3.1-start-applet.patch
