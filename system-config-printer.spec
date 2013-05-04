@@ -11,7 +11,7 @@
 Name:			system-config-printer
 Summary:		A printer administration tool
 Version:		1.3.12
-Release:		12
+Release:		12=3
 Url:			http://cyberelk.net/tim/software/system-config-printer/
 License:		LGPLv2+
 Group:			System/Configuration/Printing
@@ -86,6 +86,7 @@ Requires:		gnome-python-gnomekeyring
 %endif
 # Required for CheckUSBPermissions.py
 Requires:		acl
+Requires:		python-notify
 
 %description
 system-config-printer is a graphical user interface that allows
