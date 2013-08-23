@@ -107,7 +107,7 @@ the user to configure a CUPS print server.
 %{_datadir}/%{name}/ui/*.ui
 %{_datadir}/%{name}/xml/*
 %{_datadir}/%{name}/icons
-%{_datadir}/applications/system-config-printer.desktop
+%{_datadir}/applications/*-system-config-printer.desktop
 #%{_datadir}/applications/manage-print-jobs.desktop
 %{_sysconfdir}/xdg/autostart/*-print-applet.desktop
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
