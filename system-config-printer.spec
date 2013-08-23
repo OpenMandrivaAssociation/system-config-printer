@@ -25,7 +25,7 @@ Source4:	mdv_printer_custom.py
 Source7:	69-printers_lp_user_fix.rules
 Source100:	system-config-printer.rpmlintrc
 #Patch0:	system-config-printer-1.3.4-mdv_custom-applet.patch
-Patch2:		system-config-printer-1.3.3-mdv_custom-system-config-printer.patch
+#Patch2:		system-config-printer-1.3.3-mdv_custom-system-config-printer.patch
 Patch3:		system-config-printer-1.3.1-start-applet.patch
 Patch4:		system-config-printer-1.3.11-udev-configure-printer-mdv.patch
 Patch5:		system-config-printer-1.3.11-mdv_custom-embedded_window.patch
@@ -38,20 +38,20 @@ Patch203:	system-config-printer-systemd.patch
 # Mageia patches
 Patch300:	system-config-printer-1.3.7-remove-Brother-HL-2030-blacklist.patch
 
-BuildRequires:	cups-devel >= 1.2
-BuildRequires:	python-devel >= 2.4
-BuildRequires:	desktop-file-utils >= 0.2.92
-BuildRequires:	gettext-devel
-BuildRequires:	intltool
-BuildRequires:	xmlto
-BuildRequires:	docbook-dtd412-xml
-BuildRequires:	docbook-style-xsl
-BuildRequires:	udev-devel
-BuildRequires:	libusb-devel
-BuildRequires:	libhpip-devel
-BuildRequires:	dbus-devel
-BuildRequires:	dbus-glib-devel
-BuildRequires:	systemd-devel
+#BuildRequires:	cups-devel >= 1.2
+#BuildRequires:	python-devel >= 2.4
+#BuildRequires:	desktop-file-utils >= 0.2.92
+#BuildRequires:	gettext-devel
+#BuildRequires:	intltool
+#BuildRequires:	xmlto
+#BuildRequires:	docbook-dtd412-xml
+#BuildRequires:	docbook-style-xsl
+#BuildRequires:	udev-devel
+#BuildRequires:	libusb-devel
+#BuildRequires:	libhpip-devel
+#BuildRequires:	dbus-devel
+#BuildRequires:	dbus-glib-devel
+#BuildRequires:	systemd-devel
 
 %rename		desktop-printing
 %rename		printerdrake
@@ -196,17 +196,17 @@ the configuration tool.
 #--------------------------------------------------------------------
 
 %prep
-%setup -q 
+%setup -q
 #patch0 -p1 -b .mdv_custom-applet
-%patch2 -p1 -b .mdv_custom-system-config-printer
+#patch2 -p1 -b .mdv_custom-system-config-printer
 %patch3 -p1 -b .start_applet
 %patch4 -p1 -b .udev-configue-printer-mdv
-%patch5 -p1 -b .mdv_custom-embedded-window
-%patch6 -p1 -b .cups_version
+#patch5 -p1 -b .mdv_custom-embedded-window
+#patch6 -p1 -b .cups_version
 # Don't show job notifications.
 %patch200 -p1 -b .no-job-notifications
-%patch201 -p1 -b .ddns
-%patch203 -p1 -b .systemd
+#patch201 -p1 -b .ddns fixed
+#patch203 -p1 -b .systemd
 
 %patch300 -p0 -b .mdv-1349
 
@@ -409,11 +409,11 @@ mv -f %{buildroot}%{_unitdir}/configure-printer@.service %{buildroot}%{_unitdir}
 
 * Tue Mar 02 2010 Tiago Salem <salem@mandriva.com.br> 1.1.93-3mdv2010.1
 + Revision: 513669
-- add missing BuildRequires
+- add missing #BuildRequires
 - disable parallel building. s-c-p is failing to build this way.
 
   + Nicolas Lécureuil <nlecureuil@mandriva.com>
-    - Add dbus-devel as BuildRequire
+    - Add dbus-devel as #BuildRequire
     - Install cups if needed
 
 * Mon Mar 01 2010 Nicolas Lécureuil <nlecureuil@mandriva.com> 1.1.93-2mdv2010.1
@@ -523,12 +523,12 @@ mv -f %{buildroot}%{_unitdir}/configure-printer@.service %{buildroot}%{_unitdir}
   purpose
 - patches rediffed for s-c-p 1.1.12: mdv_custom-applet,
   mdv_custom-embedded_window, mdv_custom-system-config-printer
-- BuildRequires docbook-style-xsl for manpages/docbook.xsl for
+- #BuildRequires docbook-style-xsl for manpages/docbook.xsl for
   man/system-config-printer.xml
 
 * Thu Sep 03 2009 Christophe Fergeau <cfergeau@mandriva.com> 1.0.16-5mdv2010.0
 + Revision: 428451
-- add docbook dtd to BuildRequires
+- add docbook dtd to #BuildRequires
 - rebuild
 
 * Thu Apr 16 2009 Gustavo De Nardin <gustavodn@mandriva.com> 1.0.16-4mdv2009.1
