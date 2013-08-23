@@ -98,7 +98,10 @@ the user to configure a CUPS print server.
 %{_sbindir}/%{name}
 #{_bindir}/hp-makeuri-mdv
 %{_bindir}/%{name}-applet
+%{_bindir}/install-printerdriver
 %dir %{_datadir}/%{name}
+%dir %{_datadir}/system-config-printer/ui
+%dir %{_datadir}/system-config-printer/xml
 %{_datadir}/%{name}/*.py*
 %{_datadir}/%{name}/troubleshoot
 %{_datadir}/%{name}/ui/*.ui
@@ -106,7 +109,7 @@ the user to configure a CUPS print server.
 %{_datadir}/%{name}/icons
 %{_datadir}/applications/system-config-printer.desktop
 #%{_datadir}/applications/manage-print-jobs.desktop
-%{_sysconfdir}/xdg/autostart/print-applet.desktop
+%{_sysconfdir}/xdg/autostart/*-print-applet.desktop
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
 %{_mandir}/man1/*
@@ -158,7 +161,7 @@ fi
 /lib/udev/*
 %dir %{_localstatedir}/run/udev-configure-printer
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
-%{_unitdir}/configure-printer.service
+%{_unitdir}/configure-printer@.service
 %{_sysconfdir}/udev/rules.d/69-printers_lp_user_fix.rules
 
 #---------------------------------------------------------------------
@@ -275,7 +278,7 @@ mv %{buildroot}%{_bindir}/%{name} %{buildroot}%{_sbindir}/%{name}
 ln -s consolehelper %{buildroot}%{_bindir}/%{name}
 
 #rename service
-mv -f %{buildroot}%{_unitdir}/configure-printer@.service %{buildroot}%{_unitdir}/configure-printer.service
+#mv -f %{buildroot}%{_unitdir}/configure-printer@.service %{buildroot}%{_unitdir}/configure-printer.service
 
 %find_lang system-config-printer
 
