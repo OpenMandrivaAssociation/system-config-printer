@@ -158,7 +158,7 @@ fi
 /lib/udev/*
 %dir %{_localstatedir}/run/udev-configure-printer
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
-%{_unitdir}/configure-printer.service
+%{_unitdir}/configure-printer@.service
 %{_sysconfdir}/udev/rules.d/69-printers_lp_user_fix.rules
 
 #---------------------------------------------------------------------
@@ -239,7 +239,6 @@ make
 #gcc %{SOURCE5} -o hp-makeuri-mdv -lhpmud
 
 %install
-rm -rf %buildroot
 %makeinstall_std udevrulesdir=/lib/udev/rules.d  udevhelperdir=/lib/udev
 
 mkdir -p %{buildroot}%{_mozillaextpath}
@@ -275,7 +274,7 @@ mv %buildroot%{_bindir}/%{name} %buildroot%{_sbindir}/%{name}
 ln -s consolehelper %buildroot%{_bindir}/%{name}
 
 #rename service
-mv -f %buildroot%{_unitdir}/configure-printer@.service %buildroot%{_unitdir}/configure-printer.service
+#mv -f %buildroot%{_unitdir}/configure-printer@.service %buildroot%{_unitdir}/configure-printer.service
 
 %find_lang system-config-printer
 
