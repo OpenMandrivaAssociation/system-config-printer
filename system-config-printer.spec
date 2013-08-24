@@ -47,15 +47,14 @@ BuildRequires:	xmlto
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	udev-devel
-BuildRequires:	libusb-devel
+BuildRequires:	pkgconfig(libusb-1.0)
 BuildRequires:	libhpip-devel
-BuildRequires:	dbus-devel
-BuildRequires:	dbus-glib-devel
-BuildRequires:	systemd-units >= 37
+BuildRequires:	pkgconfig(dbus-1)
+BuildRequires:	pkgconfig(dbus-glib-1)
+BuildRequires:	pkgconfig(systemd)
 
-Obsoletes:		desktop-printing
-Obsoletes:		printerdrake
-Provides:		printerdrake
+%rename			desktop-printing
+%rename			printerdrake
 Requires:		pygtk2 >= 2.4.0
 Requires:		pygtk2.0-libglade
 Requires:		python-gobject
@@ -159,7 +158,7 @@ fi
 /lib/udev/*
 %dir %{_localstatedir}/run/udev-configure-printer
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
-%{_unitdir}/configure-printer.service
+%{_unitdir}/configure-printer@.service
 %{_sysconfdir}/udev/rules.d/69-printers_lp_user_fix.rules
 
 #---------------------------------------------------------------------
@@ -240,7 +239,6 @@ make
 #gcc %{SOURCE5} -o hp-makeuri-mdv -lhpmud
 
 %install
-rm -rf %buildroot
 %makeinstall_std udevrulesdir=/lib/udev/rules.d  udevhelperdir=/lib/udev
 
 mkdir -p %{buildroot}%{_mozillaextpath}
@@ -276,7 +274,7 @@ mv %buildroot%{_bindir}/%{name} %buildroot%{_sbindir}/%{name}
 ln -s consolehelper %buildroot%{_bindir}/%{name}
 
 #rename service
-mv -f %buildroot%{_unitdir}/configure-printer@.service %buildroot%{_unitdir}/configure-printer.service
+#mv -f %buildroot%{_unitdir}/configure-printer@.service %buildroot%{_unitdir}/configure-printer.service
 
 %find_lang system-config-printer
 
