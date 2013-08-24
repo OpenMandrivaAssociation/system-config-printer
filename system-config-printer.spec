@@ -47,15 +47,14 @@ BuildRequires:	xmlto
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	udev-devel
-BuildRequires:	libusb-devel
+BuildRequires:	pkgconfig(libusb-1.0)
 BuildRequires:	libhpip-devel
-BuildRequires:	dbus-devel
-BuildRequires:	dbus-glib-devel
-BuildRequires:	systemd-units >= 37
+BuildRequires:	pkgconfig(dbus-1)
+BuildRequires:	pkgconfig(dbus-glib-1)
+BuildRequires:	pkgconfig(systemd)
 
-Obsoletes:		desktop-printing
-Obsoletes:		printerdrake
-Provides:		printerdrake
+%rename			desktop-printing
+%rename			printerdrake
 Requires:		pygtk2 >= 2.4.0
 Requires:		pygtk2.0-libglade
 Requires:		python-gobject
