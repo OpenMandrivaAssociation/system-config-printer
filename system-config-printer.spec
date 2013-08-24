@@ -11,7 +11,7 @@
 Name:			system-config-printer
 Summary:		A printer administration tool
 Version:		1.3.12
-Release:		13
+Release:		14
 Url:			http://cyberelk.net/tim/software/system-config-printer/
 License:		LGPLv2+
 Group:			System/Configuration/Printing
