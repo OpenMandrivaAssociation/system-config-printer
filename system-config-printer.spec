@@ -29,7 +29,6 @@ Patch3:			system-config-printer-1.3.1-start-applet.patch
 
 # Fedora patches
 Patch200:		system-config-printer-no-job-notifications.patch
-Patch201:		system-config-printer-dnssd-crash.patch
 Patch203:		system-config-printer-systemd.patch
 
 # Mageia patches
@@ -207,7 +206,6 @@ the configuration tool.
 %patch5 -p1 -b .mga_custom-embedded-window
 # Don't show job notifications.
 %patch200 -p1 -b .no-job-notifications
-%patch201 -p1 -b .ddns
 %patch203 -p1 -b .systemd
 %patch300 -p0 -b .mdv-1349
 
