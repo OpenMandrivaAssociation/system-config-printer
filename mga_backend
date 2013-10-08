@@ -1,0 +1,65 @@
+#!/usr/bin/python
+import os
+import re
+
+def detect_network_printers():
+    printers_final = []
+    a = open("/proc/net/route")
+    b= a.readlines()
+    defaultentry = None
+    if b[-1].split('\t')[2] != "00000000":
+        defaultentry = b[-1].split('\t')
+
+    defaultiface = defaultentry[0]
+    # TODO: write in a better way
+    addrsline = os.popen("LC_ALL=C /sbin/ifconfig "+defaultiface+" | grep 'inet addr:' | sed 's/:/\\n/g' | grep '[0-9]' | sed 's/[^0-9\.]//g'")
+    c = addrsline.readlines()
+    ip = c[0].strip()
+    bcast = c[1].strip()
+    mask = c[2].strip()
+
+    mask=mask.split(".")
+    ipsplit=ip.split(".")
+    if mask[2]!="255":
+        pingres = os.popen("LC_ALL=C ping -b -c 2 "+bcast+ " 2>/dev/null | sed 's/.*bytes from \(.*\):.*/\\1/g' | grep '^[0-9].*[0-9]$' | uniq")
+    else:
+        pingres = os.popen("for i in $(seq 1 254); do echo "+ipsplit[0]+"."+ipsplit[1]+"."+ipsplit[2]+"."+"$i; done")
+
+    hostlist=""
+    for i in pingres.readlines():
+        if i.strip() == ip:
+            continue
+        if not hostlist:
+            hostlist = i.strip()
+        else:
+            hostlist += ("\n"+i.strip())
+    nmapresult = os.popen("echo -e '"+hostlist+"' | LC_ALL=C nmap -n -r -vd2 -P0 --max-retries 1 --host_timeout 16000 --initial_rtt_timeout 8000 -p 9100 -d0 -iL - 2>/dev/null | grep -v PORT")
+    reg = re.compile(r"Interesting ports on (.*[0-9]):")
+    printers = []
+    while True:
+        try:
+            i = nmapresult.next()
+        except:
+            break
+
+        try:
+            try:
+                ip = reg.findall(i)[0]
+            except:
+                continue
+            a = nmapresult.next()
+            port=a.split()[0]
+            state=a.split()[1]
+            service=a.split()[2]
+            if a.split()[1] == "open":
+                printers.append([ip,port,state,service])
+        except:
+            break
+
+    for printer in printers:
+        a = os.popen("/usr/lib/cups/backend/snmp "+printer[0])
+        out = a.readlines()
+        if out != []:
+            print out[0].strip()
+
+detect_network_printers()

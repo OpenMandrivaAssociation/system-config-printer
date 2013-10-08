@@ -1,0 +1,258 @@
+diff --git a/newprinter.py b/newprinter.py
+index f049da8..975066c 100644
+--- a/newprinter.py
++++ b/newprinter.py
+@@ -44,6 +44,8 @@ try:
+ except ImportError:
+     from io import StringIO
+ 
++import mdv_printer_custom
++
+ import cups
+ 
+ try:
+@@ -1142,6 +1144,27 @@ class NewPrinterGUI(GtkGUI):
+                                 self.device.make_and_model = \
+                                     self.downloadable_driver_for_printer
+ 
++                # mageia hook: ask to install the right driver
++                driver_packages=None
++                if not self.remotecupsqueue and not self.device.type in ("lpd", "ipp", "bluetooth", "smb"):
++                    if self.device.id_dict['DES'] != "AppSocket/HP JetDirect":
++                        if self.device.id_dict["MFG"] and self.device.id_dict["MDL"]:
++                            driver_packages = mdv_printer_custom.guess_driver_packages(self.device.id_dict["MFG"], self.device.id_dict["MDL"])
++                        else:
++                            driver_packages = mdv_printer_custom.guess_driver_packages(self.auto_make, self.auto_model)
++                if driver_packages:
++                    if not mdv_printer_custom.is_installed_packages(driver_packages):
++                        status = gtk.RESPONSE_YES
++                        while status != gtk.RESPONSE_NO:
++                            if not mdv_printer_custom.install_packages(driver_packages):
++                                dialog = gtk.MessageDialog(self.NewPrinterWindow,
++                                        buttons=gtk.BUTTONS_YES_NO,
++                                        message_format=_("The required driver package is missing, try again?"))
++                                status = dialog.run()
++                                dialog.destroy()
++                            else:
++                                break
++
+                 devid = None
+                 if not self.remotecupsqueue or self.dialog_mode == "ppd":
+                     devid = self.device.id # ID of selected device
+@@ -1251,6 +1274,10 @@ class NewPrinterGUI(GtkGUI):
+                         ppdname = 'raw'
+                         self.ppd = ppdname
+                         status = "exact"
++                    elif self.device.uri and self.device.uri.startswith ("parallel"):
++                        (p_make, p_model) = mdv_printer_custom.probe_parport_info(self.device.uri)
++                        self.auto_make = p_make
++                        self.auto_model = p_model
+                     else:
+                         (status, ppdname) = self.ppds.\
+                             getPPDNameFromDeviceID ("Generic",
+@@ -2809,6 +2836,11 @@ class NewPrinterGUI(GtkGUI):
+             # the selected device.
+             if device.type == "parallel":
+                 text = _("A printer connected to the parallel port.")
++                (p_make, p_model) = mdv_printer_custom.probe_parport_info(device.uri)
++                if p_make and p_model:
++                    make_model = p_make + " " + p_model
++                    info = make_model + " ("+ device.info + ")"
++                    device.info = info
+             elif device.type == "usb":
+                 text = _("A printer connected to a USB port.")
+             elif device.type == "bluetooth":
+diff --git a/ppdsloader.py b/ppdsloader.py
+index 5ae6365..bee216c 100644
+--- a/ppdsloader.py
++++ b/ppdsloader.py
+@@ -104,7 +104,10 @@ class PPDsLoader(GObject.GObject):
+         if self._local_cups and self._device_id and self._bus:
+             self._gpk_device_id = "MFG:%s;MDL:%s;" % (self._devid_dict["MFG"],
+                                                       self._devid_dict["MDL"])
+-            self._query_packagekit ()
++            # don't ask PackageKit for drivers, not used on Mageia (yet?)
++            # and produces a scary error message (Anssi 03/2012)
++            #self._query_packagekit ()
++            self._query_cups ()
+         else:
+             self._query_cups ()
+ 
+diff --git a/system-config-printer.py b/system-config-printer.py
+index 390dd4a..d4ee88e 100755
+--- a/system-config-printer.py
++++ b/system-config-printer.py
+@@ -456,6 +456,13 @@ class GUI(GtkGUI):
+ 
+         self.PrintersWindow.show()
+ 
++        # task-printing-hp is needed even if you dont have a HP printer. (hp-makeuri, hp-info..)
++        if not mdv_printer_custom.is_installed_packages(['task-printing-server', 'task-printing-hp']):
++            if not mdv_printer_custom.install_packages(['task-printing-server', 'task-printing-hp']):
++                sys.exit (1)
++            os.system("/sbin/service cups start")
++            self.on_btnRefresh_clicked(None)
++
+     def display_properties_dialog_for (self, queue):
+         model = self.dests_iconview.get_model ()
+         iter = model.get_iter_first ()
+@@ -1823,6 +1830,7 @@ class GUI(GtkGUI):
+     def on_new_printer_activate(self, widget, *UNUSED):
+         busy (self.PrintersWindow)
+         self.desensitise_new_printer_widgets ()
++        mdv_printer_custom.reload_parport()
+         if not self.newPrinterGUI.init("printer",
+                                        host=self.connect_server,
+                                        encryption=self.connect_encrypt,
+diff --git a/udev/udev-add-printer b/udev/udev-add-printer
+index 1cda2f8..23e33be 100755
+--- a/udev/udev-add-printer
++++ b/udev/udev-add-printer
+@@ -1,4 +1,5 @@
+ #!/usr/bin/python
++# -*- coding: utf-8 -*-
+ 
+ ## udev-add-printer
+ 
+@@ -25,6 +26,8 @@ import dbus
+ import os
+ import sys
+ import traceback
++import mdv_printer_custom
++import re
+ from syslog import *
+ 
+ MFG_BLACKLIST=[
+@@ -104,6 +107,81 @@ def add_queue (device_id, device_uris, fax_basename=False):
+         return
+ 
+     syslog (LOG_DEBUG, "add_queue: URIs=%s" % device_uris)
++    syslog (LOG_DEBUG, "add_queue: ID=%s" % device_id )
++
++    """ We extract the manufacturer from device_id """
++    make = device_id.split(';')[0].split(':')[1]
++    model = device_id.split(';')[1].split(':')[1]
++
++    syslog (LOG_DEBUG, "add_queue: make=%s" % make )
++    syslog (LOG_DEBUG, "add_queue: model=%s" % model )
++    
++    bus = dbus.SystemBus()
++    
++    try:
++      obj = bus.get_object ("com.redhat.NewPrinterNotification",
++          "/com/redhat/NewPrinterNotification")
++      notification = dbus.Interface (obj,
++          "com.redhat.NewPrinterNotification")
++      #notification.GetReady ()
++    except:
++      pass
++
++    """Ensure we have cups installed and running"""
++    if not mdv_printer_custom.is_installed_packages(['task-printing-server']):
++      try:
++        syslog (LOG_DEBUG, "Calling InstallSpooler")
++        ret = bus.call_blocking('com.redhat.NewPrinterNotification',
++            '/com/redhat/NewPrinterNotification',
++            'com.redhat.NewPrinterNotification', 'InstallSpooler',
++            '', (), timeout=360)
++        if not ret:
++          syslog (LOG_DEBUG, "InstallSpooler Failed")
++          bus.call_blocking('com.redhat.NewPrinterNotification',
++              '/com/redhat/NewPrinterNotification',
++              'com.redhat.NewPrinterNotification', 'InstallSpoolerFailed',
++              '', (), timeout=360)
++          return
++      except dbus.DBusException, e:
++          syslog (LOG_DEBUG, "D-Bus method call failed: %s" % e)
++    packages = mdv_printer_custom.guess_driver_packages(make, model)
++    syslog (LOG_DEBUG, "PACKAGES: %s" % packages)
++    # if no package is found, try the auto detection anyway
++    if packages:
++      try:
++        if not mdv_printer_custom.is_installed_packages(packages):
++          packages_ok = bus.call_blocking('com.redhat.NewPrinterNotification',
++              '/com/redhat/NewPrinterNotification',
++              'com.redhat.NewPrinterNotification', 'InstallDriver',
++              'ssas', (make,model,packages), timeout=360)
++          if not packages_ok:
++            bus.call_blocking('com.redhat.NewPrinterNotification',
++                '/com/redhat/NewPrinterNotification',
++                'com.redhat.NewPrinterNotification', 'MissingDriver',
++                'ss', (make,model,))
++            return
++      except dbus.DBusException, e:
++        pass
++    if mdv_printer_custom.is_firmware_needed(make, model):
++      if (not mdv_printer_custom.is_firmware_present(make,model)) and (mdv_printer_custom.make2simplename(make) == "hp"):
++        try:
++          syslog (LOG_INFO, "Firmware PrinterFirmwareDownload")
++          bus.call_blocking('com.redhat.NewPrinterNotification',
++            '/com/redhat/NewPrinterNotification',
++            'com.redhat.NewPrinterNotification', 'PrinterFirmwareDownload',
++            'ss', (make,model,), timeout=360)
++          if not mdv_printer_custom.is_firmware_present(make,model):
++            bus.call_blocking('com.redhat.NewPrinterNotification',
++                '/com/redhat/NewPrinterNotification',
++                'com.redhat.NewPrinterNotification', 'MissingDriver',
++                'ss', (make,model,))
++            return
++          else:
++            return
++          
++        except dbus.DBusException, e:
++          pass
++
+     installer = None
+     if fax_basename != False:
+         notification = None
+@@ -119,16 +197,6 @@ def add_queue (device_id, device_uris, fax_basename=False):
+             syslog (LOG_DEBUG, "D-Bus method call failed: %s" % e)
+             notification = None
+ 
+-        try:
+-            obj = bus.get_object ("com.redhat.PrinterDriversInstaller",
+-                                  "/com/redhat/PrinterDriversInstaller")
+-            installer = dbus.Interface (obj,
+-                                        "com.redhat.PrinterDriversInstaller")
+-        except dbus.DBusException as e:
+-            #syslog (LOG_DEBUG, "Failed to get D-Bus object for "
+-            #        "PrinterDriversInstaller: %s" % e)
+-            pass
+-
+     id_dict = cupshelpers.parseDeviceID (device_id)
+     if installer:
+         cmd = id_dict["CMD"]
+@@ -150,6 +218,20 @@ def add_queue (device_id, device_uris, fax_basename=False):
+                                                      id_dict["DES"],
+                                                      id_dict["CMD"],
+                                                      device_uris[0])
++    
++    """We reach here when we have cups installed"""
++    if os.system("/sbin/service cups status") != 0:
++      if os.system("/sbin/service cups restart") != 0:
++        bus = dbus.SystemBus()
++        try:
++          syslog (LOG_DEBUG, "Calling SpoolerStartFailed")
++          ret = bus.call_blocking('com.redhat.NewPrinterNotification',
++              '/com/redhat/NewPrinterNotification',
++              'com.redhat.NewPrinterNotification', 'SpoolerStartFailed',
++              '', (), timeout=360)
++        except dbus.DBusException, e:
++          syslog (LOG_DEBUG, "D-Bus method call failed: %s" % e)
++
+     syslog (LOG_DEBUG, "PPD: %s; Status: %d" % (ppdname, status))
+ 
+     if status == 0:
+diff --git a/system-config-printer.py b/system-config-printer.py
+index ccedf1c..14f6e68 100755
+--- a/system-config-printer.py
++++ b/system-config-printer.py
+@@ -24,7 +24,7 @@
+ # config is generated from config.py.in by configure
+ import config
+ 
+-import sys, os, time, re
++import sys, os, time, re, mdv_printer_custom
+ import thread
+ import dbus
+ from gi.repository import GdkPixbuf
