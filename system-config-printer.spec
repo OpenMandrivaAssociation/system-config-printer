@@ -26,7 +26,6 @@ Source6:		mga_backend
 
 Source100:		system-config-printer.rpmlintrc
 Patch3:			system-config-printer-1.3.1-start-applet.patch
-Patch6:			system-config-printer-1.3.11-cups-version.patch
 
 # Fedora patches
 Patch200:		system-config-printer-no-job-notifications.patch
@@ -206,7 +205,6 @@ the configuration tool.
 %patch3 -p1 -b .start_applet
 %patch4 -p1 -b .udev-configue-printer-mga
 %patch5 -p1 -b .mga_custom-embedded-window
-%patch6 -p1 -b .cups_version
 # Don't show job notifications.
 %patch200 -p1 -b .no-job-notifications
 %patch201 -p1 -b .ddns
