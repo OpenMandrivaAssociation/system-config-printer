@@ -7,7 +7,7 @@ index 05f227a..9dca7ed 100644
  ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  
 +# Added for Mageia
-+import mdv_printer_custom
++import mga_printer_custom
 +import os
 +## End added for mageia
 +
@@ -35,7 +35,7 @@ index 05f227a..9dca7ed 100644
 +        """
 +        packages = []
 +        for package in packages2install:
-+            if not mdv_printer_custom.is_installed_packages([package]):
++            if not mga_printer_custom.is_installed_packages([package]):
 +                packages.append(package)
 +
 +        # spooler installed if packages is empty
@@ -48,7 +48,7 @@ index 05f227a..9dca7ed 100644
 +        n.set_urgency (pynotify.URGENCY_NORMAL)
 +        n.show()
 +
-+        if mdv_printer_custom.install_packages(packages):
++        if mga_printer_custom.install_packages(packages):
 +            return True
 +        else:
 +            return False
@@ -97,7 +97,7 @@ index 05f227a..9dca7ed 100644
 +        n = pynotify.Notification (title, text, 'printer')
 +        n.set_urgency (pynotify.URGENCY_NORMAL)
 +        n.show()
-+        if mdv_printer_custom.make2simplename(make) == "hp":
++        if mga_printer_custom.make2simplename(make) == "hp":
 +            os.system("hp-setup")
 +            return os.system("hp-firmware -n")
 +        return False
@@ -135,7 +135,7 @@ index 05f227a..9dca7ed 100644
 +        n = pynotify.Notification (title, text, 'printer')
 +        n.set_urgency (pynotify.URGENCY_NORMAL)
 +        n.show()
-+        if mdv_printer_custom.install_packages(packages):
++        if mga_printer_custom.install_packages(packages):
 +             return True
 +        else:
 +             return False
@@ -143,9 +143,9 @@ index 05f227a..9dca7ed 100644
 +    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='b')
 +    def CheckAndInstallDrivers (self, make, model):
 +        import os
-+        packages = mdv_printer_custom.guess_driver_packages(make,model);
++        packages = mga_printer_custom.guess_driver_packages(make,model);
 +        if packages:
-+            if mdv_printer_custom.is_installed_packages(packages):
++            if mga_printer_custom.is_installed_packages(packages):
 +                return True
 +            else:
 +                printer = make+" "+model
@@ -154,7 +154,7 @@ index 05f227a..9dca7ed 100644
 +                n = pynotify.Notification (title, text, 'printer')
 +                n.set_urgency (pynotify.URGENCY_NORMAL)
 +                n.show()
-+                if mdv_printer_custom.install_packages(packages):
++                if mga_printer_custom.install_packages(packages):
 +                    return True
 +                else:
 +                    return False
@@ -163,9 +163,9 @@ index 05f227a..9dca7ed 100644
 +    @dbus.service.method(PDS_IFACE, in_signature='ss', out_signature='b')
 +    def CheckInstalledDrivers (self, make, model):
 +        import os
-+        packages = mdv_printer_custom.guess_driver_packages(make,model);
++        packages = mga_printer_custom.guess_driver_packages(make,model);
 +        if packages:
-+            if mdv_printer_custom.is_installed_packages(packages):
++            if mga_printer_custom.is_installed_packages(packages):
 +                return True
 +            else:
 +                return False
@@ -177,7 +177,7 @@ index 05f227a..9dca7ed 100644
 +        packages2install = ['task-printing-server', 'hplip-model-data']
 +        packages = []
 +        for package in packages2install:
-+            if not mdv_printer_custom.is_installed_packages([package]):
++            if not mga_printer_custom.is_installed_packages([package]):
 +                packages.append(package)
 +
 +        # spooler installed if packages is empty
