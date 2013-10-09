@@ -98,9 +98,11 @@ the user to configure a CUPS print server.
 %{_bindir}/scp-dbus-service
 %{_bindir}/install-printerdriver
 %{_sbindir}/%{name}
-#{_bindir}/hp-makeuri-mdv
+%{_bindir}/hp-makeuri-mdv
 %{_bindir}/%{name}-applet
 %dir %{_datadir}/%{name}
+%dir %{_datadir}/%{name}/ui
+%dir %{_datadir}/%{name}/xml
 %{_datadir}/%{name}/*.py*
 %{_datadir}/%{name}/troubleshoot
 %{_datadir}/%{name}/ui/*.ui
