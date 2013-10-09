@@ -206,7 +206,6 @@ the configuration tool.
 %patch5 -p1 -b .mga_custom-embedded-window
 # Don't show job notifications.
 %patch200 -p1 -b .no-job-notifications
-%patch203 -p1 -b .systemd
 %patch300 -p0 -b .mdv-1349
 
 # update mdv custom translation
