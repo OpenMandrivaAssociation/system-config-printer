@@ -161,7 +161,6 @@ fi
 %dir %{_localstatedir}/run/udev-configure-printer
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
 %{_unitdir}/configure-printer@.service
-%{_sysconfdir}/udev/rules.d/69-printers_lp_user_fix.rules
 
 #---------------------------------------------------------------------
 
@@ -191,8 +190,8 @@ the configuration tool.
 %{python_sitelib}/cupshelpers/config.py*
 %{python_sitelib}/cupshelpers/installdriver.py*
 %{python_sitelib}/cupshelpers/xmldriverprefs.py*
-#{_prefix}/lib/cups/backend/mdv_backend
-%{py_platsitedir}/mdv_printer_custom.py*
+%{_prefix}/lib/cups/backend/mdv_backend
+%{py_platsitedir}/mga_printer_custom.py*
 %{python_sitelib}/*.egg-info
 
 #--------------------------------------------------------------------
@@ -259,8 +258,6 @@ touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
 #%{__mkdir_p} %{buildroot}%{_prefix}/lib/cups/backend
 #cp -f %{SOURCE6} %{buildroot}%{_prefix}/lib/cups/backend
 
-%{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d/
-cp -f %{SOURCE7} %{buildroot}%{_sysconfdir}/udev/rules.d/
 
 mkdir -p %buildroot%{_bindir}
 mkdir -p %buildroot%{_sbindir}
