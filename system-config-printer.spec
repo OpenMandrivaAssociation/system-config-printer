@@ -9,34 +9,34 @@
 %define pygnomekeyring 1
 
 Name:		system-config-printer
-Summary:		A printer administration tool
-Version:		1.4.2
-Release:		1
-Url:			http://cyberelk.net/tim/software/system-config-printer/
-License:		LGPLv2+
-Group:			System/Configuration/Printing
-Source0:		http://cyberelk.net/tim/data/system-config-printer/1.3/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.xz
-Source1:		system-config-printer.pam
-Source2:		system-config-printer.console
-Source3:		po-mdv.tar.bz2
-Source5:		hp-makeuri-mdv.c
+Summary:	A printer administration tool
+Version:	1.4.2
+Release:	1
+Url:		http://cyberelk.net/tim/software/system-config-printer/
+License:	LGPLv2+
+Group:		System/Configuration/Printing
+Source0:	http://cyberelk.net/tim/data/system-config-printer/1.4/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.xz
+Source1:	system-config-printer.pam
+Source2:	system-config-printer.console
+Source3:	po-mdv.tar.bz2
+Source5:	hp-makeuri-mdv.c
 # (tpg) from Mageia
-Source4:		mga_printer_custom.py
-Source6:		mga_backend
+Source4:	mdv_printer_custom.py
+Source6:	mdv_backend
 
-Source100:		system-config-printer.rpmlintrc
-Patch3:			system-config-printer-1.3.1-start-applet.patch
+Source100:	system-config-printer.rpmlintrc
+Patch3:		system-config-printer-1.3.1-start-applet.patch
 
 # Fedora patches
-Patch200:		system-config-printer-no-job-notifications.patch
-Patch203:		system-config-printer-systemd.patch
+Patch200:	system-config-printer-no-job-notifications.patch
+Patch203:	system-config-printer-systemd.patch
 
-# Mageia patches
-Patch0:			system-config-printer-1.4.2-mga_custom-applet.patch
-Patch2:			system-config-printer-1.4.2-mga_custom-system-config-printer.patch
-Patch4:			system-config-printer-1.3.12-udev-configure-printer-mga.patch
-Patch5:			system-config-printer-1.4.2-mga_custom-embedded_window.patch
-Patch300:		system-config-printer-1.3.7-remove-Brother-HL-2030-blacklist.patch
+# patches based Mageia patches
+Patch0:		system-config-printer-1.4.2-mdv_custom-applet.patch
+Patch2:		system-config-printer-1.4.2-mdv_custom-system-config-printer.patch
+Patch4:		system-config-printer-1.3.12-udev-configure-printer-mdv.patch
+Patch5:		system-config-printer-1.4.2-mdv_custom-embedded_window.patch
+Patch300:	system-config-printer-1.3.7-remove-Brother-HL-2030-blacklist.patch
 
 BuildRequires:	cups-devel >= 1.2
 BuildRequires:	python-devel >= 2.4
@@ -53,39 +53,39 @@ BuildRequires:	pkgconfig(dbus-1)
 BuildRequires:	pkgconfig(dbus-glib-1)
 BuildRequires:	pkgconfig(systemd)
 
-%rename			desktop-printing
-%rename			printerdrake
-Requires:		pygtk2 >= 2.4.0
-Requires:		pygtk2.0-libglade
-Requires:		python-gobject
-Requires:		libxml2-python
-Requires:		desktop-file-utils >= 0.2.92
-Requires:		dbus-x11
-Requires:		system-config-printer-libs = %{version}-%{release}
-Requires:		system-config-printer-udev = %{version}-%{release}
-Requires:		gnome-icon-theme
-Requires:		gnome-python-gnomekeyring
-Requires:		virtual-notification-daemon
-Requires:		python-dbus
-Requires:		python-pyinotify
-Requires:		python-curl
-Requires:		hplip-model-data
+%rename		desktop-printing
+%rename		printerdrake
+Requires:	pygtk2 >= 2.4.0
+Requires:	pygtk2.0-libglade
+Requires:	python-gobject
+Requires:	libxml2-python
+Requires:	desktop-file-utils >= 0.2.92
+Requires:	dbus-x11
+Requires:	system-config-printer-libs = %{version}-%{release}
+Requires:	system-config-printer-udev = %{version}-%{release}
+Requires:	gnome-icon-theme
+Requires:	gnome-python-gnomekeyring
+Requires:	virtual-notification-daemon
+Requires:	python-dbus
+Requires:	python-pyinotify
+Requires:	python-curl
+Requires:	hplip-model-data
 #We now use packagekit
-#Requires:		packagekit
-#Requires:		typelib(PackageKitGlib)
+#Requires:	packagekit
+#Requires:	typelib(PackageKitGlib)
 # nmap is required to scan the network, just like 
 # printerdrake used to do.
-Requires:		nmap
-Requires:		python-smbc
+Requires:	nmap
+Requires:	python-smbc
 # Why? kdeutils4-printer-applet reqires system-config-printer...
-#Conflicts:		kdeutils4-printer-applet
-Suggests:		samba-client
+#Conflicts:	kdeutils4-printer-applet
+Suggests:	samba-client
 %if %{pygnomekeyring}
-Requires:		gnome-python-gnomekeyring
+Requires:	gnome-python-gnomekeyring
 %endif
 # Required for CheckUSBPermissions.py
-Requires:		acl
-Requires:		python-notify
+Requires:	acl
+Requires:	python-notify
 Requires(post,postun):	rpm-helper
 
 %description
@@ -117,13 +117,13 @@ the user to configure a CUPS print server.
 
 #---------------------------------------------------------------------
 %package udev
-Summary:		Rules for udev for automatic configuration of USB printers
-Group:			System/Configuration/Hardware
-Requires:		system-config-printer-libs = %{version}-%{release}
+Summary:	Rules for udev for automatic configuration of USB printers
+Group:		System/Configuration/Hardware
+Requires:	system-config-printer-libs = %{version}-%{release}
 Requires(post):	rpm-helper >= 0.24.1
 Requires(preun):	rpm-helper >= 0.24.1
-Obsoletes:		hal-cups-utils <= 0.6.20
-Conflicts:		cups < 1.4.2-6
+Obsoletes:	hal-cups-utils <= 0.6.20
+Conflicts:	cups < 1.4.2-6
 
 %description udev
 The udev rules and helper programs for automatically configuring USB
@@ -193,18 +193,18 @@ the configuration tool.
 %{python_sitelib}/cupshelpers/installdriver.py*
 %{python_sitelib}/cupshelpers/xmldriverprefs.py*
 %{_prefix}/lib/cups/backend/mdv_backend
-%{py_platsitedir}/mga_printer_custom.py*
+%{py_platsitedir}/mdv_printer_custom.py*
 %{python_sitelib}/*.egg-info
 
 #--------------------------------------------------------------------
 
 %prep
 %setup -q 
-%patch0 -p1 -b .mga_custom-applet
-%patch2 -p1 -b .mga_custom-system-config-printer
+%patch0 -p1 -b .mdv_custom-applet
+%patch2 -p1 -b .mdv_custom-system-config-printer
 %patch3 -p1 -b .start_applet
-%patch4 -p1 -b .udev-configue-printer-mga
-%patch5 -p1 -b .mga_custom-embedded-window
+%patch4 -p1 -b .udev-configue-printer-mdv
+%patch5 -p1 -b .mdv_custom-embedded-window
 # Don't show job notifications.
 %patch200 -p1 -b .no-job-notifications
 %patch300 -p0 -b .mdv-1349
@@ -255,19 +255,18 @@ pushd %{buildroot}%{py_platsitedir}
 python -m compileall .
 popd
 
-%{__mkdir_p} %buildroot%{_localstatedir}/run/udev-configure-printer
-touch %buildroot%{_localstatedir}/run/udev-configure-printer/usb-uris
-#%{__mkdir_p} %{buildroot}%{_prefix}/lib/cups/backend
-#cp -f %{SOURCE6} %{buildroot}%{_prefix}/lib/cups/backend
+%{__mkdir_p} %{buildroot}%{_localstatedir}/run/udev-configure-printer
+touch %{buildroot}%{_localstatedir}/run/udev-configure-printer/usb-uris
+%{__mkdir_p} %{buildroot}%{_prefix}/lib/cups/backend
+cp -f %{SOURCE6} %{buildroot}%{_prefix}/lib/cups/backend
 
-
-mkdir -p %buildroot%{_bindir}
-mkdir -p %buildroot%{_sbindir}
-mkdir -p %buildroot%{_sysconfdir}/pam.d
-mkdir -p %buildroot%{_sysconfdir}/security/console.apps
-install -p -m0644 %{SOURCE1} %buildroot%{_sysconfdir}/pam.d/%{name}
-install -p -m0644 %{SOURCE2} %buildroot%{_sysconfdir}/security/console.apps/%{name}
-mv %buildroot%{_bindir}/%{name} %buildroot%{_sbindir}/%{name}
-ln -s consolehelper %buildroot%{_bindir}/%{name}
+mkdir -p %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_sbindir}
+mkdir -p %{buildroot}%{_sysconfdir}/pam.d
+mkdir -p %{buildroot}%{_sysconfdir}/security/console.apps
+install -p -m0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pam.d/%{name}
+install -p -m0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/security/console.apps/%{name}
+mv %{buildroot}%{_bindir}/%{name} %{buildroot}%{_sbindir}/%{name}
+ln -s consolehelper %{buildroot}%{_bindir}/%{name}
 
 %find_lang system-config-printer

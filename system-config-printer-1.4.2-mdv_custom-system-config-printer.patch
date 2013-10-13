@@ -6,7 +6,7 @@ index f049da8..975066c 100644
  except ImportError:
      from io import StringIO
  
-+import mga_printer_custom
++import mdv_printer_custom
 +
  import cups
  
@@ -20,14 +20,14 @@ index f049da8..975066c 100644
 +                if not self.remotecupsqueue and not self.device.type in ("lpd", "ipp", "bluetooth", "smb"):
 +                    if self.device.id_dict['DES'] != "AppSocket/HP JetDirect":
 +                        if self.device.id_dict["MFG"] and self.device.id_dict["MDL"]:
-+                            driver_packages = mga_printer_custom.guess_driver_packages(self.device.id_dict["MFG"], self.device.id_dict["MDL"])
++                            driver_packages = mdv_printer_custom.guess_driver_packages(self.device.id_dict["MFG"], self.device.id_dict["MDL"])
 +                        else:
-+                            driver_packages = mga_printer_custom.guess_driver_packages(self.auto_make, self.auto_model)
++                            driver_packages = mdv_printer_custom.guess_driver_packages(self.auto_make, self.auto_model)
 +                if driver_packages:
-+                    if not mga_printer_custom.is_installed_packages(driver_packages):
++                    if not mdv_printer_custom.is_installed_packages(driver_packages):
 +                        status = gtk.RESPONSE_YES
 +                        while status != gtk.RESPONSE_NO:
-+                            if not mga_printer_custom.install_packages(driver_packages):
++                            if not mdv_printer_custom.install_packages(driver_packages):
 +                                dialog = gtk.MessageDialog(self.NewPrinterWindow,
 +                                        buttons=gtk.BUTTONS_YES_NO,
 +                                        message_format=_("The required driver package is missing, try again?"))
@@ -44,7 +44,7 @@ index f049da8..975066c 100644
                          self.ppd = ppdname
                          status = "exact"
 +                    elif self.device.uri and self.device.uri.startswith ("parallel"):
-+                        (p_make, p_model) = mga_printer_custom.probe_parport_info(self.device.uri)
++                        (p_make, p_model) = mdv_printer_custom.probe_parport_info(self.device.uri)
 +                        self.auto_make = p_make
 +                        self.auto_model = p_model
                      else:
@@ -54,7 +54,7 @@ index f049da8..975066c 100644
              # the selected device.
              if device.type == "parallel":
                  text = _("A printer connected to the parallel port.")
-+                (p_make, p_model) = mga_printer_custom.probe_parport_info(device.uri)
++                (p_make, p_model) = mdv_printer_custom.probe_parport_info(device.uri)
 +                if p_make and p_model:
 +                    make_model = p_make + " " + p_model
 +                    info = make_model + " ("+ device.info + ")"
@@ -87,8 +87,8 @@ index 390dd4a..d4ee88e 100755
          self.PrintersWindow.show()
  
 +        # task-printing-hp is needed even if you dont have a HP printer. (hp-makeuri, hp-info..)
-+        if not mga_printer_custom.is_installed_packages(['task-printing-server', 'task-printing-hp']):
-+            if not mga_printer_custom.install_packages(['task-printing-server', 'task-printing-hp']):
++        if not mdv_printer_custom.is_installed_packages(['task-printing-server', 'task-printing-hp']):
++            if not mdv_printer_custom.install_packages(['task-printing-server', 'task-printing-hp']):
 +                sys.exit (1)
 +            os.system("/sbin/service cups start")
 +            self.on_btnRefresh_clicked(None)
@@ -100,7 +100,7 @@ index 390dd4a..d4ee88e 100755
      def on_new_printer_activate(self, widget, *UNUSED):
          busy (self.PrintersWindow)
          self.desensitise_new_printer_widgets ()
-+        mga_printer_custom.reload_parport()
++        mdv_printer_custom.reload_parport()
          if not self.newPrinterGUI.init("printer",
                                         host=self.connect_server,
                                         encryption=self.connect_encrypt,
@@ -118,7 +118,7 @@ index 1cda2f8..23e33be 100755
  import os
  import sys
  import traceback
-+import mga_printer_custom
++import mdv_printer_custom
 +import re
  from syslog import *
  
@@ -148,7 +148,7 @@ index 1cda2f8..23e33be 100755
 +      pass
 +
 +    """Ensure we have cups installed and running"""
-+    if not mga_printer_custom.is_installed_packages(['task-printing-server']):
++    if not mdv_printer_custom.is_installed_packages(['task-printing-server']):
 +      try:
 +        syslog (LOG_DEBUG, "Calling InstallSpooler")
 +        ret = bus.call_blocking('com.redhat.NewPrinterNotification',
@@ -164,12 +164,12 @@ index 1cda2f8..23e33be 100755
 +          return
 +      except dbus.DBusException, e:
 +          syslog (LOG_DEBUG, "D-Bus method call failed: %s" % e)
-+    packages = mga_printer_custom.guess_driver_packages(make, model)
++    packages = mdv_printer_custom.guess_driver_packages(make, model)
 +    syslog (LOG_DEBUG, "PACKAGES: %s" % packages)
 +    # if no package is found, try the auto detection anyway
 +    if packages:
 +      try:
-+        if not mga_printer_custom.is_installed_packages(packages):
++        if not mdv_printer_custom.is_installed_packages(packages):
 +          packages_ok = bus.call_blocking('com.redhat.NewPrinterNotification',
 +              '/com/redhat/NewPrinterNotification',
 +              'com.redhat.NewPrinterNotification', 'InstallDriver',
@@ -182,15 +182,15 @@ index 1cda2f8..23e33be 100755
 +            return
 +      except dbus.DBusException, e:
 +        pass
-+    if mga_printer_custom.is_firmware_needed(make, model):
-+      if (not mga_printer_custom.is_firmware_present(make,model)) and (mga_printer_custom.make2simplename(make) == "hp"):
++    if mdv_printer_custom.is_firmware_needed(make, model):
++      if (not mdv_printer_custom.is_firmware_present(make,model)) and (mdv_printer_custom.make2simplename(make) == "hp"):
 +        try:
 +          syslog (LOG_INFO, "Firmware PrinterFirmwareDownload")
 +          bus.call_blocking('com.redhat.NewPrinterNotification',
 +            '/com/redhat/NewPrinterNotification',
 +            'com.redhat.NewPrinterNotification', 'PrinterFirmwareDownload',
 +            'ss', (make,model,), timeout=360)
-+          if not mga_printer_custom.is_firmware_present(make,model):
++          if not mdv_printer_custom.is_firmware_present(make,model):
 +            bus.call_blocking('com.redhat.NewPrinterNotification',
 +                '/com/redhat/NewPrinterNotification',
 +                'com.redhat.NewPrinterNotification', 'MissingDriver',
@@ -252,7 +252,7 @@ index ccedf1c..14f6e68 100755
  import config
  
 -import sys, os, time, re
-+import sys, os, time, re, mga_printer_custom
++import sys, os, time, re, mdv_printer_custom
  import thread
  import dbus
  from gi.repository import GdkPixbuf
