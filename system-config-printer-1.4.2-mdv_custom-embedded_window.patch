@@ -1,16 +1,16 @@
---- system-config-printer-1.3.11/system-config-printer.py.orig	2012-08-01 11:48:26.000000000 -0400
-+++ system-config-printer-1.3.11/system-config-printer.py	2012-08-19 12:00:21.112797099 -0400
-@@ -47,7 +47,8 @@ def show_help():
-            "a CUPS server configuration program.\n\n"
+diff --git a/system-config-printer.py b/system-config-printer.py
+index d4ee88e..ccedf1c 100755
+--- a/system-config-printer.py
++++ b/system-config-printer.py
+@@ -43,6 +43,7 @@ def show_help():
             "Options:\n\n"
             "  --debug                 Enable debugging output.\n"
--           "  --show-jobs <printer>   Show the print queue for <printer>\n")
-+           "  --show-jobs <printer>   Show the print queue for <printer>\n"
-+           "  --embedded              Enable to start in Embedded mode.\n " )
+            "  --show-jobs <printer>   Show the print queue for <printer>\n"
++           "  --embedded              Enable to start in Embedded mode.\n "
+            "  --help                  Show this message.\n")
  
  if len(sys.argv)>1 and sys.argv[1] == '--help':
-     show_help ()
-@@ -97,6 +98,9 @@ pkgdata = config.pkgdatadir
+@@ -90,6 +91,9 @@ pkgdata = config.pkgdatadir
  iconpath = os.path.join (pkgdata, 'icons/')
  sys.path.append (pkgdata)
  
@@ -20,11 +20,10 @@
  def CUPS_server_hostname ():
      host = cups.getServer ()
      if host[0] == '/':
-@@ -199,7 +203,17 @@ class GUI(GtkGUI):
+@@ -192,6 +196,16 @@ class GUI(GtkGUI):
  
                          domain=config.PACKAGE)
  
--
 +        if PlugWindowId:
 +            self.PrintersWindow.hide()
 +            # the "vbox4" widget
@@ -35,25 +34,24 @@
 +            self.PrintersWindow.set_transient_for(PlugWindow)
 +            PlugWindow.show_all()
 +            self.PrintersWindow = PlugWindow
-+		
+ 
          # Since some dialogs are reused we can't let the delete-event's
          # default handler destroy them
-         self.ConnectingDialog.connect ("delete-event",
-@@ -1993,7 +2007,8 @@ if __name__ == "__main__":
+@@ -2101,7 +2115,8 @@ if __name__ == "__main__":
      import getopt
      try:
          opts, args = getopt.gnu_getopt (sys.argv[1:], '',
 -                                        ['debug', 'show-jobs='])
-+                                        ['embedded=',
-+                                         'debug', 'show-jobs='])
++                                        ['embedded=', 
++                                            'debug', 'show-jobs='])
      except getopt.GetoptError:
          show_help ()
          sys.exit (1)
-@@ -2006,5 +2021,7 @@ if __name__ == "__main__":
-             cupshelpers.ppds.set_debugprint_fn (debugprint)
+@@ -2115,4 +2130,7 @@ if __name__ == "__main__":
          elif opt == '--show-jobs':
              show_jobs = optarg
+ 
 +        if opt == "--embedded":
 +            PlugWindowId = long(optarg)
- 
++
      main(show_jobs)
