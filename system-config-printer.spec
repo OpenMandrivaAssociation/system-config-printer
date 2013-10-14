@@ -90,7 +90,14 @@ Requires(post,postun):	rpm-helper
 # (tpg) requires typelib(xlib)
 Requires:	%{_lib}xlib-gir2.0
 # (tpg) requires typelib(Gdk)
-Requires:	%{_lib}gdk-gir2.0
+Requires:	%{_lib}gdk-gir3.0
+# (tpg) requires typelib(Notify)
+Requires:	%{_lib}notify-gir0.7
+# (tpg) requires typelib(GmomeKeyring)
+Requires:	%{_lib}gnome-keyring-gir1.0
+Requires:	%{_lib}gtk-gir3.0
+Requires:	%{_lib}gdkx11-gir2.0
+Requires:	python-gi
 
 %description
 system-config-printer is a graphical user interface that allows
