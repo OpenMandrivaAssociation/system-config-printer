@@ -87,6 +87,7 @@ Requires:	gnome-python-gnomekeyring
 Requires:	acl
 Requires:	python-notify
 Requires(post,postun):	rpm-helper
+Requires:	typelib(xlib)
 
 %description
 system-config-printer is a graphical user interface that allows
