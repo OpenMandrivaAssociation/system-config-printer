@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.4.2
-Release:	5
+Release:	6
 Url:		http://cyberelk.net/tim/software/system-config-printer/
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -51,8 +51,7 @@ BuildRequires:	pkgconfig(systemd)
 #Requires:	pygtk2.0-libglade
 Requires:	python-gobject
 Requires:	libxml2-python
-Requires:	desktop-file-utils >= 0.2.92
-Requires:	gnome-python-gnomekeyring
+#Requires:	gnome-python-gnomekeyring
 Requires:	virtual-notification-daemon
 Requires:	python-dbus
 Requires:	python-pyinotify
@@ -86,24 +85,25 @@ the user to configure a CUPS print server.
 Summary:	GTK frontend for %{name}
 Group:		System/Configuration/Hardware
 Requires:	system-config-printer = %{version}-%{release}
-Conflicts:	system-config-printer < 4.1.2-6
+Conflicts:	system-config-printer < 1.4.2-6
 Requires:	gnome-icon-theme
 Requires:	dbus-x11
 
+
 # (tpg) requires typelib(xlib)
-Requires:	%{_lib}xlib-gir2.0
+#Requires:	%{_lib}xlib-gir2.0
 # (tpg) requires typelib(Gdk)
-Requires:	%{_lib}gdk-gir3.0
+#Requires:	%{_lib}gdk-gir3.0
 # (tpg) requires typelib(Notify)
-Requires:	%{_lib}notify-gir0.7
+#Requires:	%{_lib}notify-gir0.7
 # (tpg) requires typelib(GmomeKeyring)
-Requires:	%{_lib}gnome-keyring-gir1.0
-Requires:	typelib(Gtk) = 3.0
-Requires:	%{_lib}gdkx11-gir2.0
-Requires:	%{_lib}cairo-gir1.0
-Requires:	%{_lib}pango-gir1.0
-Requires:	%{_lib}atk-gir1.0
-Requires:	python-gi
+#Requires:	%{_lib}gnome-keyring-gir1.0
+#Requires:	typelib(Gtk) = 3.0
+#Requires:	%{_lib}gdkx11-gir2.0
+#Requires:	%{_lib}cairo-gir1.0
+#Requires:	%{_lib}pango-gir1.0
+#Requires:	%{_lib}atk-gir1.0
+#Requires:	python-gi
 
 %description gui
 This package provides the GTK frontend.
