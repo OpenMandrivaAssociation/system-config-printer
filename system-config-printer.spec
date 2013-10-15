@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.4.2
-Release:	6
+Release:	7
 Url:		http://cyberelk.net/tim/software/system-config-printer/
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -47,6 +47,7 @@ BuildRequires:	pkgconfig(systemd)
 %rename		printerdrake
 %rename		system-config-printer-libs
 %rename		system-config-printer-udev
+Conflicts:	system-config-printer-gui < 1.4.2-7
 #Requires:	pygtk2 >= 2.4.0
 #Requires:	pygtk2.0-libglade
 Requires:	python-gobject
@@ -60,7 +61,7 @@ Requires:	hplip-model-data
 #We now use packagekit
 #Requires:	packagekit
 #Requires:	typelib(PackageKitGlib)
-# nmap is required to scan the network, just like 
+# nmap is required to scan the network, just like
 # printerdrake used to do.
 Requires:	nmap
 Requires:	python-smbc
@@ -86,7 +87,7 @@ the user to configure a CUPS print server.
 Summary:	GTK frontend for %{name}
 Group:		System/Configuration/Hardware
 Requires:	system-config-printer = %{version}-%{release}
-Conflicts:	system-config-printer < 1.4.2-6
+Conflicts:	system-config-printer < 1.4.2-7
 Requires:	gnome-icon-theme
 Requires:	dbus-x11
 Requires:	typelib(xlib) = 2.0
@@ -216,8 +217,6 @@ fi
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
 /lib/udev/*
 %{_unitdir}/configure-printer@.service
-%{_bindir}/%{name}
-%{_sbindir}/%{name}
 %{_bindir}/scp-dbus-service
 %{_bindir}/hp-makeuri-mdv
 %{_datadir}/%{name}/asyncconn.py*
@@ -254,6 +253,8 @@ fi
 %dir %{_datadir}/%{name}/troubleshoot
 %dir %{_datadir}/%{name}/icons
 %{_sysconfdir}/xdg/autostart/print-applet.desktop
+%{_bindir}/%{name}
+%{_sbindir}/%{name}
 %{_bindir}/install-printerdriver
 %{_bindir}/%{name}-applet
 %{_datadir}/%{name}/applet.py*
