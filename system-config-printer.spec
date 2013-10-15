@@ -99,6 +99,7 @@ Requires:	%{_lib}gtk-gir3.0
 Requires:	%{_lib}gdkx11-gir2.0
 Requires:	%{_lib}cairo-gir1.0
 Requires:	%{_lib}pango-gir1.0
+Requires:	%{_lib}atk-gir1.0
 Requires:	python-gi
 
 %description
