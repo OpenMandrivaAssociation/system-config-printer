@@ -11,7 +11,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.4.2
-Release:	4
+Release:	5
 Url:		http://cyberelk.net/tim/software/system-config-printer/
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -98,6 +98,7 @@ Requires:	%{_lib}gnome-keyring-gir1.0
 Requires:	%{_lib}gtk-gir3.0
 Requires:	%{_lib}gdkx11-gir2.0
 Requires:	%{_lib}cairo-gir1.0
+Requires:	%{_lib}pango-gir1.0
 Requires:	python-gi
 
 %description
