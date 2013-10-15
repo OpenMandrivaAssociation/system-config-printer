@@ -74,6 +74,7 @@ Requires(post,postun):	rpm-helper
 Requires:	python
 Requires:	foomatic
 Requires:	python-cups
+Requires:	python-gi
 Obsoletes:	hal-cups-utils <= 0.6.20
 Conflicts:	cups < 1.4.2-6
 
@@ -88,22 +89,14 @@ Requires:	system-config-printer = %{version}-%{release}
 Conflicts:	system-config-printer < 1.4.2-6
 Requires:	gnome-icon-theme
 Requires:	dbus-x11
-
-
-# (tpg) requires typelib(xlib)
-#Requires:	%{_lib}xlib-gir2.0
-# (tpg) requires typelib(Gdk)
-#Requires:	%{_lib}gdk-gir3.0
-# (tpg) requires typelib(Notify)
-#Requires:	%{_lib}notify-gir0.7
-# (tpg) requires typelib(GmomeKeyring)
-#Requires:	%{_lib}gnome-keyring-gir1.0
-#Requires:	typelib(Gtk) = 3.0
-#Requires:	%{_lib}gdkx11-gir2.0
-#Requires:	%{_lib}cairo-gir1.0
-#Requires:	%{_lib}pango-gir1.0
-#Requires:	%{_lib}atk-gir1.0
-#Requires:	python-gi
+Requires:	typelib(xlib) = 2.0
+Requires:	typelib(Gdk) = 3.0
+Requires:	typelib(Notify) = 0.7
+Requires:	typelib(GnomeKeyring) = 1.0
+Requires:	typelib(Gtk) = 3.0
+Requires:	typelib(cairo) = 1.0
+Requires:	typelib(Pango) = 1.0
+Requires:	typelib(Atk) = 1.0
 
 %description gui
 This package provides the GTK frontend.
