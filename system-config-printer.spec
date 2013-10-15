@@ -48,8 +48,6 @@ BuildRequires:	pkgconfig(systemd)
 %rename		system-config-printer-libs
 %rename		system-config-printer-udev
 Conflicts:	system-config-printer-gui < 1.4.2-7
-#Requires:	pygtk2 >= 2.4.0
-#Requires:	pygtk2.0-libglade
 Requires:	python-gobject
 Requires:	libxml2-python
 #Requires:	gnome-python-gnomekeyring
@@ -90,6 +88,8 @@ Requires:	system-config-printer = %{version}-%{release}
 Conflicts:	system-config-printer < 1.4.2-7
 Requires:	gnome-icon-theme
 Requires:	dbus-x11
+Requires:	pygtk2 >= 2.4.0
+Requires:	pygtk2.0-libglade
 Requires:	typelib(xlib) = 2.0
 Requires:	typelib(Gdk) = 3.0
 Requires:	typelib(Notify) = 0.7
