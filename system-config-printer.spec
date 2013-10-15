@@ -1,17 +1,7 @@
-%define use_gitsnap 0
-%{?_no_gitsnap: %{expand: %%global use_gitsnap 0}}
-%if %{use_gitsnap}
-%define gitsnap 200809231700
-%endif
-
-# disable the requires on gnome-python-gnomekeyring when it's not avaialable
-# gnome-python-desktop requires s-c-p indirectly and the build fails otherwise
-%define pygnomekeyring 1
-
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.4.2
-Release:	5
+Release:	7
 Url:		http://cyberelk.net/tim/software/system-config-printer/
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -55,16 +45,14 @@ BuildRequires:	pkgconfig(systemd)
 
 %rename		desktop-printing
 %rename		printerdrake
-Requires:	pygtk2 >= 2.4.0
-Requires:	pygtk2.0-libglade
+%rename		system-config-printer-libs
+%rename		system-config-printer-udev
+Conflicts:	system-config-printer-gui < 1.4.2-7
+#Requires:	pygtk2 >= 2.4.0
+#Requires:	pygtk2.0-libglade
 Requires:	python-gobject
 Requires:	libxml2-python
-Requires:	desktop-file-utils >= 0.2.92
-Requires:	dbus-x11
-Requires:	system-config-printer-libs = %{version}-%{release}
-Requires:	system-config-printer-udev = %{version}-%{release}
-Requires:	gnome-icon-theme
-Requires:	gnome-python-gnomekeyring
+#Requires:	gnome-python-gnomekeyring
 Requires:	virtual-notification-daemon
 Requires:	python-dbus
 Requires:	python-pyinotify
@@ -73,146 +61,49 @@ Requires:	hplip-model-data
 #We now use packagekit
 #Requires:	packagekit
 #Requires:	typelib(PackageKitGlib)
-# nmap is required to scan the network, just like 
+# nmap is required to scan the network, just like
 # printerdrake used to do.
 Requires:	nmap
 Requires:	python-smbc
 # Why? kdeutils4-printer-applet reqires system-config-printer...
 #Conflicts:	kdeutils4-printer-applet
 Suggests:	samba-client
-%if %{pygnomekeyring}
-Requires:	gnome-python-gnomekeyring
-%endif
 # Required for CheckUSBPermissions.py
 Requires:	acl
 Requires:	python-notify
 Requires(post,postun):	rpm-helper
-# (tpg) requires typelib(xlib)
-Requires:	%{_lib}xlib-gir2.0
-# (tpg) requires typelib(Gdk)
-Requires:	%{_lib}gdk-gir3.0
-# (tpg) requires typelib(Notify)
-Requires:	%{_lib}notify-gir0.7
-# (tpg) requires typelib(GmomeKeyring)
-Requires:	%{_lib}gnome-keyring-gir1.0
-Requires:	%{_lib}gtk-gir3.0
-Requires:	%{_lib}gdkx11-gir2.0
-Requires:	%{_lib}cairo-gir1.0
-Requires:	%{_lib}pango-gir1.0
-Requires:	python-gi
-
-%description
-system-config-printer is a graphical user interface that allows
-the user to configure a CUPS print server.
-
-%files
-%doc ChangeLog README
-%{_bindir}/%{name}
-%{_bindir}/scp-dbus-service
-%{_bindir}/install-printerdriver
-%{_sbindir}/%{name}
-%{_bindir}/hp-makeuri-mdv
-%{_bindir}/%{name}-applet
-%dir %{_datadir}/%{name}
-%dir %{_datadir}/%{name}/ui
-%dir %{_datadir}/%{name}/xml
-%{_datadir}/%{name}/*.py*
-%{_datadir}/%{name}/troubleshoot
-%{_datadir}/%{name}/ui/*.ui
-%{_datadir}/%{name}/xml/*
-%{_datadir}/%{name}/icons
-%{_datadir}/applications/system-config-printer.desktop
-#%{_datadir}/applications/manage-print-jobs.desktop
-%{_sysconfdir}/xdg/autostart/print-applet.desktop
-%config(noreplace) %{_sysconfdir}/pam.d/%{name}
-%config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
-%{_mandir}/man1/*
-
-#---------------------------------------------------------------------
-%package udev
-Summary:	Rules for udev for automatic configuration of USB printers
-Group:		System/Configuration/Hardware
-Requires:	system-config-printer-libs = %{version}-%{release}
-Requires(post):	rpm-helper >= 0.24.1
-Requires(preun):	rpm-helper >= 0.24.1
-Obsoletes:	hal-cups-utils <= 0.6.20
-Conflicts:	cups < 1.4.2-6
-
-%description udev
-The udev rules and helper programs for automatically configuring USB
-printers.
-
-%post
-# disable old printer detection system
-if [ -f /etc/sysconfig/printing ]; then
-    if grep -q ^AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
-        sed -i 's/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=.*/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no/g' /etc/sysconfig/printing
-    else
-        echo AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
-    fi
-    if grep -q ^ENABLE_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
-        sed -i 's/ENABLE_QUEUES_ON_PRINTER_CONNECTED=.*/ENABLE_QUEUES_ON_PRINTER_CONNECTED=no/g' /etc/sysconfig/printing
-    else
-        echo ENABLE_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
-    fi
-else
-    echo AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
-    echo ENABLE_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
-fi
-
-%postun
-# enable old printer detection system
-if [ -f /etc/sysconfig/printing ]; then
-    if grep -q ^AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
-        sed -i 's/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=.*/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=yes/g' /etc/sysconfig/printing
-    fi
-    if grep -q ^ENABLE_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
-        sed -i 's/ENABLE_QUEUES_ON_PRINTER_CONNECTED=.*/ENABLE_QUEUES_ON_PRINTER_CONNECTED=yes/g' /etc/sysconfig/printing
-    fi
-fi
-
-%files udev
-/lib/udev/*
-%dir %{_localstatedir}/run/udev-configure-printer
-%verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
-%{_unitdir}/configure-printer@.service
-
-#---------------------------------------------------------------------
-
-%package libs
-Summary:	Common code for the graphical and non-graphical pieces
-Group:		System/Libraries 
 Requires:	python
 Requires:	foomatic
 Requires:	python-cups
+Requires:	python-gi
+Obsoletes:	hal-cups-utils <= 0.6.20
+Conflicts:	cups < 1.4.2-6
 
-%description libs
-The common code used by both the graphical and non-graphical parts of
-the configuration tool.
+%description
+system-config-printer is a user interface that allows
+the user to configure a CUPS print server.
 
-%files libs -f system-config-printer.lang
-%dir %{_sysconfdir}/cupshelpers/
-%config(noreplace) %{_sysconfdir}/cupshelpers/preferreddrivers.xml
-%config(noreplace) %{_sysconfdir}/dbus-1/system.d/com.redhat.NewPrinterNotification.conf
-%config(noreplace) %{_sysconfdir}/dbus-1/system.d/com.redhat.PrinterDriversInstaller.conf
-%config(noreplace) %{_datadir}/dbus-1/interfaces/org.fedoraproject.Config.Printing.xml
-%config(noreplace) %{_datadir}/dbus-1/services/org.fedoraproject.Config.Printing.service
-%dir %{python_sitelib}/cupshelpers
-%{python_sitelib}/cupshelpers/__init__.py*
-%{python_sitelib}/cupshelpers/cupshelpers.py*
-%{python_sitelib}/cupshelpers/openprinting.py*
-%{python_sitelib}/cupshelpers/ppds.py*
-%{python_sitelib}/cupshelpers/config.py*
-%{python_sitelib}/cupshelpers/installdriver.py*
-%{python_sitelib}/cupshelpers/xmldriverprefs.py*
-%{_prefix}/lib/cups/backend/mdv_backend
-%{py_platsitedir}/mdv_printer_custom.py*
-%{python_sitelib}/*.egg-info
+%package gui
+Summary:	GTK frontend for %{name}
+Group:		System/Configuration/Hardware
+Requires:	system-config-printer = %{version}-%{release}
+Conflicts:	system-config-printer < 1.4.2-7
+Requires:	gnome-icon-theme
+Requires:	dbus-x11
+Requires:	typelib(xlib) = 2.0
+Requires:	typelib(Gdk) = 3.0
+Requires:	typelib(Notify) = 0.7
+Requires:	typelib(GnomeKeyring) = 1.0
+Requires:	typelib(Gtk) = 3.0
+Requires:	typelib(cairo) = 1.0
+Requires:	typelib(Pango) = 1.0
+Requires:	typelib(Atk) = 1.0
 
-#--------------------------------------------------------------------
+%description gui
+This package provides the GTK frontend.
 
 %prep
-%setup -q 
+%setup -q
 %patch0 -p1 -b .mdv_custom-applet
 %patch2 -p1 -b .mdv_custom-system-config-printer
 %patch3 -p1 -b .start_applet
@@ -238,10 +129,6 @@ popd
 autoreconf -fi
 
 %build
-%if %{use_gitsnap}
-./bootstrap
-%endif
-
 %configure2_5x \
   --with-systemdsystemunitdir=%{_unitdir} \
   --with-udev-rules
@@ -283,3 +170,116 @@ mv %{buildroot}%{_bindir}/%{name} %{buildroot}%{_sbindir}/%{name}
 ln -s consolehelper %{buildroot}%{_bindir}/%{name}
 
 %find_lang system-config-printer
+
+%post
+# disable old printer detection system
+if [ -f /etc/sysconfig/printing ]; then
+    if grep -q ^AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
+        sed -i 's/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=.*/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no/g' /etc/sysconfig/printing
+    else
+        echo AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
+    fi
+    if grep -q ^ENABLE_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
+        sed -i 's/ENABLE_QUEUES_ON_PRINTER_CONNECTED=.*/ENABLE_QUEUES_ON_PRINTER_CONNECTED=no/g' /etc/sysconfig/printing
+    else
+        echo ENABLE_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
+    fi
+else
+    echo AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
+    echo ENABLE_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
+fi
+
+%postun
+# enable old printer detection system
+if [ -f /etc/sysconfig/printing ]; then
+    if grep -q ^AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
+        sed -i 's/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=.*/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=yes/g' /etc/sysconfig/printing
+    fi
+    if grep -q ^ENABLE_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
+        sed -i 's/ENABLE_QUEUES_ON_PRINTER_CONNECTED=.*/ENABLE_QUEUES_ON_PRINTER_CONNECTED=yes/g' /etc/sysconfig/printing
+    fi
+fi
+
+%files -f system-config-printer.lang
+%doc ChangeLog README
+%dir %{_datadir}/%{name}
+%dir %{_datadir}/%{name}/xml
+%dir %{_sysconfdir}/cupshelpers/
+%dir %{_localstatedir}/run/udev-configure-printer
+%dir %{python_sitelib}/cupshelpers
+%config(noreplace) %{_sysconfdir}/pam.d/%{name}
+%config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
+%config(noreplace) %{_sysconfdir}/cupshelpers/preferreddrivers.xml
+%config(noreplace) %{_sysconfdir}/dbus-1/system.d/com.redhat.NewPrinterNotification.conf
+%config(noreplace) %{_sysconfdir}/dbus-1/system.d/com.redhat.PrinterDriversInstaller.conf
+%config(noreplace) %{_datadir}/dbus-1/interfaces/org.fedoraproject.Config.Printing.xml
+%config(noreplace) %{_datadir}/dbus-1/services/org.fedoraproject.Config.Printing.service
+%verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
+/lib/udev/*
+%{_unitdir}/configure-printer@.service
+%{_bindir}/scp-dbus-service
+%{_bindir}/hp-makeuri-mdv
+%{_datadir}/%{name}/asyncconn.py*
+%{_datadir}/%{name}/asyncpk1.py*
+%{_datadir}/%{name}/check-device-ids.py*
+%{_datadir}/%{name}/config.py*
+%{_datadir}/%{name}/debug.py*
+%{_datadir}/%{name}/dnssdresolve.py*
+%{_datadir}/%{name}/firewallsettings.py*
+%{_datadir}/%{name}/installpackage.py*
+%{_datadir}/%{name}/monitor.py*
+%{_datadir}/%{name}/PhysicalDevice.py*
+%{_datadir}/%{name}/ppdippstr.py*
+%{_datadir}/%{name}/probe_printer.py*
+%{_datadir}/%{name}/pysmb.py*
+%{_datadir}/%{name}/scp-dbus-service.py*
+%{_datadir}/%{name}/SearchCriterion.py*
+%{_datadir}/%{name}/smburi.py*
+%{_datadir}/%{name}/statereason.py*
+%{_datadir}/%{name}/xml/*
+%{python_sitelib}/cupshelpers/__init__.py*
+%{python_sitelib}/cupshelpers/cupshelpers.py*
+%{python_sitelib}/cupshelpers/openprinting.py*
+%{python_sitelib}/cupshelpers/ppds.py*
+%{python_sitelib}/cupshelpers/config.py*
+%{python_sitelib}/cupshelpers/installdriver.py*
+%{python_sitelib}/cupshelpers/xmldriverprefs.py*
+%{_prefix}/lib/cups/backend/mdv_backend
+%{py_platsitedir}/mdv_printer_custom.py*
+%{python_sitelib}/*.egg-info
+
+%files gui
+%dir %{_datadir}/%{name}/ui
+%dir %{_datadir}/%{name}/troubleshoot
+%dir %{_datadir}/%{name}/icons
+%{_sysconfdir}/xdg/autostart/print-applet.desktop
+%{_bindir}/%{name}
+%{_sbindir}/%{name}
+%{_bindir}/install-printerdriver
+%{_bindir}/%{name}-applet
+%{_datadir}/%{name}/applet.py*
+%{_datadir}/%{name}/asyncipp.py*
+%{_datadir}/%{name}/authconn.py*
+%{_datadir}/%{name}/cupspk.py*
+%{_datadir}/%{name}/errordialogs.py*
+%{_datadir}/%{name}/gtkinklevel.py*
+%{_datadir}/%{name}/gui.py*
+%{_datadir}/%{name}/HIG.py*
+%{_datadir}/%{name}/install-printerdriver.py*
+%{_datadir}/%{name}/jobviewer.py*
+%{_datadir}/%{name}/newprinter.py*
+%{_datadir}/%{name}/options.py*
+%{_datadir}/%{name}/optionwidgets.py*
+%{_datadir}/%{name}/ppdcache.py*
+%{_datadir}/%{name}/ppdsloader.py*
+%{_datadir}/%{name}/printerproperties.py*
+%{_datadir}/%{name}/serversettings.py*
+%{_datadir}/%{name}/system-config-printer.py*
+%{_datadir}/%{name}/timedops.py*
+%{_datadir}/%{name}/ToolbarSearchEntry.py*
+%{_datadir}/%{name}/userdefault.py*
+%{_datadir}/%{name}/troubleshoot/*.py*
+%{_datadir}/%{name}/icons/*.png
+%{_datadir}/%{name}/ui/*.ui
+%{_datadir}/applications/system-config-printer.desktop
+%{_mandir}/man1/*
