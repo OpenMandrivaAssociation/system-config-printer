@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.4.2
-Release:	8
+Release:	9
 Url:		http://cyberelk.net/tim/software/system-config-printer/
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -108,7 +108,7 @@ This package provides the GTK frontend.
 %patch2 -p1 -b .mdv_custom-system-config-printer
 %patch3 -p1 -b .start_applet
 %patch4 -p1 -b .udev-configue-printer-mdv
-%patch5 -p1 -b .mdv_custom-embedded-window
+#%patch5 -p1 -b .mdv_custom-embedded-window
 # Don't show job notifications.
 %patch200 -p1 -b .no-job-notifications
 %patch300 -p0 -b .mdv-1349

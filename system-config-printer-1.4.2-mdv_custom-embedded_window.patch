@@ -51,7 +51,7 @@ index d4ee88e..ccedf1c 100755
          elif opt == '--show-jobs':
              show_jobs = optarg
  
-+        #if opt == "--embedded":
-+        #    PlugWindowId = long(optarg)
++        if opt == "--embedded":
++            PlugWindowId = long(optarg)
 +
      main(show_jobs)
