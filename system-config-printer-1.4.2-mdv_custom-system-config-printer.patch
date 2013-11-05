@@ -25,11 +25,11 @@ index f049da8..975066c 100644
 +                            driver_packages = mdv_printer_custom.guess_driver_packages(self.auto_make, self.auto_model)
 +                if driver_packages:
 +                    if not mdv_printer_custom.is_installed_packages(driver_packages):
-+                        status = gtk.RESPONSE_YES
-+                        while status != gtk.RESPONSE_NO:
++                        status = Gtk.RESPONSE_YES
++                        while status != Gtk.RESPONSE_NO:
 +                            if not mdv_printer_custom.install_packages(driver_packages):
-+                                dialog = gtk.MessageDialog(self.NewPrinterWindow,
-+                                        buttons=gtk.BUTTONS_YES_NO,
++                                dialog = Gtk.MessageDialog(self.NewPrinterWindow,
++                                        buttons=Gtk.BUTTONS_YES_NO,
 +                                        message_format=_("The required driver package is missing, try again?"))
 +                                status = dialog.run()
 +                                dialog.destroy()
