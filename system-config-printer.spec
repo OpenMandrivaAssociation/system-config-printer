@@ -48,7 +48,6 @@ BuildRequires:	pkgconfig(systemd)
 %rename		system-config-printer-libs
 %rename		system-config-printer-udev
 Conflicts:	system-config-printer-gui < 1.4.2-7
-Requires:	python-gobject
 Requires:	libxml2-python
 #Requires:	gnome-python-gnomekeyring
 Requires:	virtual-notification-daemon
