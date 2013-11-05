@@ -28,8 +28,8 @@ index d4ee88e..ccedf1c 100755
 +            self.PrintersWindow.hide()
 +            # the "vbox4" widget
 +            vbox = self.PrintersWindow.get_children()[0]
-+            PlugWindow = gtk.Plug(PlugWindowId)
-+            gtk.Container.remove(self.PrintersWindow, vbox)
++            PlugWindow = Gtk.Plug(PlugWindowId)
++            Gtk.Container.remove(self.PrintersWindow, vbox)
 +            PlugWindow.add(vbox)
 +            self.PrintersWindow.set_transient_for(PlugWindow)
 +            PlugWindow.show_all()
