@@ -1,6 +1,6 @@
 diff '-Nurpx*~' system-config-printer-1.3.11/configure.in system-config-printer-1.3.11-f/configure.in
---- system-config-printer-1.3.11/configure.in	2012-03-01 16:16:35.000000000 +0200
-+++ system-config-printer-1.3.11-f/configure.in	2012-03-26 04:33:06.383773297 +0300
+--- system-config-printer-1.4.4/configure.ac	2012-03-01 16:16:35.000000000 +0200
++++ system-config-printer-1.4.4-f/configure.ac	2012-03-26 04:33:06.383773297 +0300
 @@ -33,6 +33,8 @@ AC_SUBST(DESKTOPVENDOR)
  AC_SUBST(cupsserverbindir)
  
@@ -11,8 +11,8 @@ diff '-Nurpx*~' system-config-printer-1.3.11/configure.in system-config-printer-
  AC_ARG_WITH(udev-rules,
  	    [AC_HELP_STRING([--with-udev-rules],
 diff '-Nurpx*~' system-config-printer-1.3.11/Makefile.am system-config-printer-1.3.11-f/Makefile.am
---- system-config-printer-1.3.11/Makefile.am	2011-10-26 15:14:19.000000000 +0300
-+++ system-config-printer-1.3.11-f/Makefile.am	2012-03-26 04:33:06.383773297 +0300
+--- system-config-printer-1.4.4/Makefile.am	2011-10-26 15:14:19.000000000 +0300
++++ system-config-printer-1.4.4-f/Makefile.am	2012-03-26 04:33:06.383773297 +0300
 @@ -182,8 +182,8 @@ udevrulesdir=$(sysconfdir)/udev/rules.d
  udevrules_DATA=udev/70-printers.rules
  udev_udev_configure_printer_SOURCES=\
@@ -21,9 +21,9 @@ diff '-Nurpx*~' system-config-printer-1.3.11/Makefile.am system-config-printer-1
 -udev_udev_configure_printer_CFLAGS= $(AM_CFLAGS) $(libusb_CFLAGS) $(GLIB_CFLAGS)
 +udev_udev_configure_printer_LDADD= -lcups -ludev $(libusb_LIBS) $(GLIB_LIBS) -ldbus-glib-1 -ldbus-1
 +udev_udev_configure_printer_CFLAGS= $(AM_CFLAGS) $(libusb_CFLAGS) $(GLIB_CFLAGS) $(DBUS_CFLAGS) $(DBUSGLIB_CFLAGS)
- udevhelperdir=$(sysconfdir)/udev
- udevhelper_PROGRAMS=\
+ udev_PROGRAMS=\
  	udev/udev-configure-printer
+ udev_SCRIPTS=\
 
 diff --git a/udev/udev-configure-printer.c b/udev/udev-configure-printer.c
 index a887cbc..ab77ba5 100644
