@@ -110,7 +110,7 @@
 --- system-config-printer-1.4.3/udev/udev-add-printer.mdv_custom-system-config-printer	2013-07-22 15:58:32.000000000 +0200
 +++ system-config-printer-1.4.3/udev/udev-add-printer	2014-01-30 12:41:36.337915643 +0100
 @@ -1,4 +1,5 @@
- #!/usr/bin/python
+ #!/usr/bin/python -s
 +# -*- coding: utf-8 -*-
  
  ## udev-add-printer
