@@ -3,6 +3,7 @@
 import dbus, sys, os, time, signal, re
 import traceback
 import cups, cupshelpers
+import csv
 
 def make2simplename(make):
     make1 = make.lower().strip()
@@ -313,16 +314,15 @@ def detect_network_printers():
     printers_final = []
     try:
         a = open("/proc/net/route")
-        b= a.readlines()
-        defaultentry = None
-        if b[-1].split('\t')[2] != "00000000":
-            defaultentry = b[-1].split('\t')
+        defaultiface = None
+        for i in csv.DictReader(a, delimiter="\t"):
+            if long(i['Destination'], 16) == 0:
+                defaultiface = i['Iface']
         else:
             return printers_final
     except:
         return printers_final
 
-    defaultiface = defaultentry[0]
     # TODO: write in a better way
     try:
         addrsline = os.popen("LC_ALL=C /sbin/ifconfig "+defaultiface+" | grep 'inet addr:' | sed 's/:/\\n/g' | grep '[0-9]' | sed 's/[^0-9\.]//g'")
@@ -347,8 +347,8 @@ def detect_network_printers():
         return printers_final
 
     try:
-        nmapresult = os.popen("echo -e '"+hostlist+"' | LC_ALL=C nmap -n -r -vd2 -P0 --max-retries 1 --host_timeout 16000 --initial_rtt_timeout 8000 -p 9100 -d0 -iL - 2>/dev/null | grep -v PORT")
-        reg = re.compile(r"Interesting ports on (.*[0-9]):")
+        nmapresult = os.popen("echo -e '"+hostlist+"' | LC_ALL=C nmap -n -r -v -P0 --max-retries 1 --host_timeout 16000ms --initial_rtt_timeout 8000ms -p 9100 -d0 -iL - 2>/dev/null | grep -vE '(PORT|Host)'")
+        reg = re.compile(r"Nmap scan report for (.*[0-9])")
         printers = []
         while True:
             try:
