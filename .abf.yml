@@ -1,5 +1,6 @@
 removed_sources:
   system-config-printer-1.4.3.tar.xz: 436866bf54e497436fb7ccc37ef7dcb3cecd1f8b
+  system-config-printer-1.4.4.tar.xz: 25d4800a612070bf24d5dea49eff4478535e0db9
 sources:
   po-mdv.tar.bz2: 8cc66ae7bb5b0d71725b248ed5a175fedfb03da0
-  system-config-printer-1.4.4.tar.xz: 25d4800a612070bf24d5dea49eff4478535e0db9
+  system-config-printer-1.5.3.tar.xz: f932b0be57840d3f3d2c772c67afe8993117ffda

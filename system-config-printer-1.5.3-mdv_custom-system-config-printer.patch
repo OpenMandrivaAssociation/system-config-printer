@@ -1,18 +1,20 @@
---- system-config-printer-1.4.3/newprinter.py.mdv_custom-system-config-printer	2013-10-17 12:34:52.000000000 +0200
-+++ system-config-printer-1.4.3/newprinter.py	2014-01-30 12:43:36.877917148 +0100
-@@ -44,6 +44,8 @@ try:
- except ImportError:
-     from io import StringIO
+diff --git a/newprinter.py b/newprinter.py
+index f049da8..975066c 100644
+--- a/newprinter.py
++++ b/newprinter.py
+@@ -44,6 +44,8 @@
+ import functools
+ from io import StringIO
  
 +import mdv_printer_custom
 +
  import cups
  
  try:
-@@ -1161,6 +1163,27 @@ class NewPrinterGUI(GtkGUI):
+@@ -1160,6 +1162,27 @@
+                                     self.downloadable_driver_for_printer):
                                      self.device.make_and_model = \
                                          self.downloadable_driver_for_printer
- 
 +                # mageia hook: ask to install the right driver
 +                driver_packages=None
 +                if not self.remotecupsqueue and not self.device.type in ("lpd", "ipp", "bluetooth", "smb"):
@@ -23,21 +25,21 @@
 +                            driver_packages = mdv_printer_custom.guess_driver_packages(self.auto_make, self.auto_model)
 +                if driver_packages:
 +                    if not mdv_printer_custom.is_installed_packages(driver_packages):
-+                        status = Gtk.RESPONSE_YES
-+                        while status != Gtk.RESPONSE_NO:
++                        status = Gtk.ResponseType.YES
++                        while status != Gtk.ResponseType.NO:
 +                            if not mdv_printer_custom.install_packages(driver_packages):
 +                                dialog = Gtk.MessageDialog(self.NewPrinterWindow,
-+                                        buttons=Gtk.BUTTONS_YES_NO,
++                                        buttons=Gtk.ButtonsType.YES_NO,
 +                                        message_format=_("The required driver package is missing, try again?"))
 +                                status = dialog.run()
 +                                dialog.destroy()
 +                            else:
 +                                break
 +
+ 
                  devid = None
                  if not self.remotecupsqueue or self.dialog_mode == "ppd":
-                     if self.dialog_mode != "download_driver":
-@@ -1276,6 +1299,10 @@ class NewPrinterGUI(GtkGUI):
+@@ -1276,6 +1299,10 @@
                          ppdname = 'raw'
                          self.ppd = ppdname
                          status = "exact"
@@ -48,7 +50,7 @@
                      else:
                          (status, ppdname) = self.ppds.\
                              getPPDNameFromDeviceID ("Generic",
-@@ -2848,6 +2875,11 @@ class NewPrinterGUI(GtkGUI):
+@@ -2848,6 +2875,11 @@
              # the selected device.
              if device.type == "parallel":
                  text = _("A printer connected to the parallel port.")
@@ -60,31 +62,34 @@
              elif device.type == "usb":
                  text = _("A printer connected to a USB port.")
              elif device.type == "bluetooth":
---- system-config-printer-1.4.3/ppdsloader.py.mdv_custom-system-config-printer	2013-07-22 15:58:32.000000000 +0200
-+++ system-config-printer-1.4.3/ppdsloader.py	2014-01-30 12:41:36.337915643 +0100
-@@ -104,7 +104,10 @@ class PPDsLoader(GObject.GObject):
-         if self._local_cups and self._device_id and self._bus:
+diff --git a/ppdsloader.py b/ppdsloader.py
+index 5ae6365..bee216c 100644
+--- a/ppdsloader.py
++++ b/ppdsloader.py
+@@ -107,7 +107,9 @@ class PPDsLoader(GObject.GObject):
+             self._bus):
              self._gpk_device_id = "MFG:%s;MDL:%s;" % (self._devid_dict["MFG"],
                                                        self._devid_dict["MDL"])
 -            self._query_packagekit ()
 +            # don't ask PackageKit for drivers, not used on Mageia (yet?)
 +            # and produces a scary error message (Anssi 03/2012)
 +            #self._query_packagekit ()
-+            self._query_cups ()
          else:
              self._query_cups ()
  
---- system-config-printer-1.4.3/system-config-printer.py.mdv_custom-system-config-printer	2013-10-02 15:39:13.000000000 +0200
-+++ system-config-printer-1.4.3/system-config-printer.py	2014-01-30 12:41:36.337915643 +0100
+diff --git a/system-config-printer.py b/system-config-printer.py
+index 390dd4a..d4ee88e 100755
+--- a/system-config-printer.py
++++ b/system-config-printer.py
 @@ -24,7 +24,7 @@
  # config is generated from config.py.in by configure
  import config
  
 -import sys, os, time, re
 +import sys, os, time, re, mdv_printer_custom
- import thread
+ import _thread
  import dbus
- from gi.repository import GdkPixbuf
+ try:
 @@ -456,6 +456,13 @@ class GUI(GtkGUI):
  
          self.PrintersWindow.show()
@@ -107,10 +112,12 @@
          if not self.newPrinterGUI.init("printer",
                                         host=self.connect_server,
                                         encryption=self.connect_encrypt,
---- system-config-printer-1.4.3/udev/udev-add-printer.mdv_custom-system-config-printer	2013-07-22 15:58:32.000000000 +0200
-+++ system-config-printer-1.4.3/udev/udev-add-printer	2014-01-30 12:41:36.337915643 +0100
+diff --git a/udev/udev-add-printer b/udev/udev-add-printer
+index 1cda2f8..23e33be 100755
+--- a/udev/udev-add-printer
++++ b/udev/udev-add-printer
 @@ -1,4 +1,5 @@
- #!/usr/bin/python -s
+ #!/usr/bin/python3 -s
 +# -*- coding: utf-8 -*-
  
  ## udev-add-printer
@@ -122,9 +129,9 @@
 +import mdv_printer_custom
 +import re
  from syslog import *
+ from functools import reduce
  
- MFG_BLACKLIST=[
-@@ -104,6 +107,81 @@ def add_queue (device_id, device_uris, f
+@@ -104,6 +107,81 @@ def add_queue (device_id, device_uris, fax_basename=False):
          return
  
      syslog (LOG_DEBUG, "add_queue: URIs=%s" % device_uris)
@@ -206,7 +213,7 @@
      installer = None
      if fax_basename != False:
          notification = None
-@@ -119,16 +197,6 @@ def add_queue (device_id, device_uris, f
+@@ -119,16 +197,6 @@ def add_queue (device_id, device_uris, fax_basename=False):
              syslog (LOG_DEBUG, "D-Bus method call failed: %s" % e)
              notification = None
  
@@ -223,7 +230,7 @@
      id_dict = cupshelpers.parseDeviceID (device_id)
      if installer:
          cmd = id_dict["CMD"]
-@@ -150,6 +218,20 @@ def add_queue (device_id, device_uris, f
+@@ -150,6 +218,20 @@ def add_queue (device_id, device_uris, fax_basename=False):
                                                       id_dict["DES"],
                                                       id_dict["CMD"],
                                                       device_uris[0])

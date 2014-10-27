@@ -1,21 +1,20 @@
-diff --git a/applet.py b/applet.py
-index 05f227a..9dca7ed 100644
+Index: applet.py
+===================================================================
 --- a/applet.py
-+++ b/applet.py
-@@ -17,6 +17,12 @@
++++ b/applet.py	2014-08-14 15:18:04.835908957 +0200
+@@ -17,6 +17,11 @@
  ## along with this program; if not, write to the Free Software
  ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  
-+# Added for
++# Added for OpenMandriva
 +import mdv_printer_custom
 +import os
-+## End added for
-+
++## End added for omv
 +
  import cups
+ from functools import reduce
  cups.require ("1.9.42")
- import sys
-@@ -105,6 +111,174 @@ class NewPrinterNotification(dbus.service.Object):
+@@ -106,6 +111,174 @@
  
          return False
  
@@ -190,7 +189,7 @@ index 05f227a..9dca7ed 100644
      @dbus.service.method(PDS_IFACE, in_signature='isssss', out_signature='')
      def NewPrinter (self, status, name, mfg, mdl, des, cmd):
          if name.find("/") >= 0:
-@@ -201,6 +375,7 @@ class NewPrinterNotification(dbus.service.Object):
+@@ -202,6 +375,7 @@
                                        self.print_test_page (x, y, name))
                      n.add_action ("configure", _("Configure"),
                                    lambda x, y: self.configure (x, y, name))

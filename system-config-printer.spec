@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
-Version:	1.4.4
-Release:	3
+Version:	1.5.3
+Release:	1
 Url:		http://cyberelk.net/tim/software/system-config-printer/
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -22,14 +22,14 @@ Patch200:	system-config-printer-no-job-notifications.patch
 Patch203:	system-config-printer-systemd.patch
 
 # patches based Mageia patches
-Patch0:		system-config-printer-1.4.2-mdv_custom-applet.patch
-Patch2:		system-config-printer-1.4.3-mdv_custom-system-config-printer.patch
+Patch0:		system-config-printer-1.5.0-mdv_custom-applet.patch
+Patch2:		system-config-printer-1.5.3-mdv_custom-system-config-printer.patch
 Patch4:		system-config-printer-1.4.4-udev-configure-printer-mdv.patch
 Patch5:		system-config-printer-1.4.2-mdv_custom-embedded_window.patch
 Patch300:	system-config-printer-1.3.7-remove-Brother-HL-2030-blacklist.patch
 
 BuildRequires:	cups-devel >= 1.2
-BuildRequires:	python-devel >= 2.4
+BuildRequires:	pkgconfig(python3)
 BuildRequires:	desktop-file-utils >= 0.2.92
 BuildRequires:	gettext-devel
 BuildRequires:	intltool
@@ -52,7 +52,6 @@ Requires:	libxml2-python
 #Requires:	gnome-python-gnomekeyring
 Requires:	virtual-notification-daemon
 Requires:	python-dbus
-Requires:	python-pyinotify
 Requires:	python-curl
 Requires:	hplip-model-data
 #We now use packagekit
@@ -67,7 +66,6 @@ Requires:	python-smbc
 Suggests:	samba-client
 # Required for CheckUSBPermissions.py
 Requires:	acl
-Requires:	python-notify
 Requires(post,postun):	rpm-helper
 Requires:	python
 Requires:	foomatic
@@ -126,7 +124,7 @@ popd
 autoreconf -fi
 
 %build
-%configure2_5x \
+%configure \
   --with-systemdsystemunitdir=%{_unitdir} \
   --with-udev-rules
 
@@ -148,7 +146,7 @@ python -m compileall .
 popd
 mkdir -p %{buildroot}%{py_platsitedir}
 cp -fv %{SOURCE4} %{buildroot}%{py_platsitedir}
-pushd %{buildroot}%{py_platsitedir}
+pushd %{buildroot}%{py_puresitedir}/cupshelpers
 python -m compileall .
 popd
 
@@ -200,6 +198,7 @@ fi
 %files -f system-config-printer.lang
 %doc ChangeLog README
 %dir %{_datadir}/%{name}
+%dir %{_datadir}/%{name}/__pycache__
 %dir %{_datadir}/%{name}/xml
 %dir %{_sysconfdir}/cupshelpers/
 %dir %{_localstatedir}/run/udev-configure-printer
@@ -225,6 +224,7 @@ fi
 %{_datadir}/%{name}/firewallsettings.py*
 %{_datadir}/%{name}/installpackage.py*
 %{_datadir}/%{name}/monitor.py*
+%{_datadir}/%{name}/OpenPrintingRequest.py*
 %{_datadir}/%{name}/PhysicalDevice.py*
 %{_datadir}/%{name}/ppdippstr.py*
 %{_datadir}/%{name}/probe_printer.py*
@@ -234,6 +234,20 @@ fi
 %{_datadir}/%{name}/smburi.py*
 %{_datadir}/%{name}/statereason.py*
 %{_datadir}/%{name}/xml/*
+%{_datadir}/%{name}/__pycache__/OpenPrintingRequest.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/PhysicalDevice.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/SearchCriterion.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/asyncconn.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/asyncpk1.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/config.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/dnssdresolve.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/monitor.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/ppdippstr.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/probe_printer.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/pysmb.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/scp-dbus-service.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/smburi.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/statereason.cpython-*.pyc
 %{python_sitelib}/cupshelpers/__init__.py*
 %{python_sitelib}/cupshelpers/cupshelpers.py*
 %{python_sitelib}/cupshelpers/openprinting.py*
@@ -241,6 +255,7 @@ fi
 %{python_sitelib}/cupshelpers/config.py*
 %{python_sitelib}/cupshelpers/installdriver.py*
 %{python_sitelib}/cupshelpers/xmldriverprefs.py*
+%{python_sitelib}/cupshelpers/__pycache__
 %{_prefix}/lib/cups/backend/mdv_backend
 %{py_platsitedir}/mdv_printer_custom.py*
 %{python_sitelib}/*.egg-info
@@ -276,7 +291,34 @@ fi
 %{_datadir}/%{name}/ToolbarSearchEntry.py*
 %{_datadir}/%{name}/userdefault.py*
 %{_datadir}/%{name}/troubleshoot/*.py*
+%{_datadir}/%{name}/troubleshoot/__pycache__
 %{_datadir}/%{name}/icons/*.png
 %{_datadir}/%{name}/ui/*.ui
+%{_datadir}/%{name}/__pycache__/ToolbarSearchEntry.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/applet.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/asyncipp.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/authconn.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/check-device-ids.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/cupspk.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/debug.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/errordialogs.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/firewallsettings.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/gtkinklevel.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/gui.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/HIG.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/install-printerdriver.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/installpackage.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/jobviewer.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/newprinter.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/options.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/optionwidgets.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/ppdcache.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/ppdsloader.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/printerproperties.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/serversettings.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/%{name}.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/timedops.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/userdefault.cpython-*.pyc
 %{_datadir}/applications/system-config-printer.desktop
+%{_datadir}/appdata/*.appdata.xml
 %{_mandir}/man1/*

@@ -1,9 +1,19 @@
-#!/bin/env python
+#!/bin/env python3
 # Tiago Salem Herrmann <salem@mandriva.com>
+# Philippe Makowski <philippem@mageia.org>
 import dbus, sys, os, time, signal, re
 import traceback
 import cups, cupshelpers
-import csv
+import socket
+import struct
+import fcntl
+import math
+import ctypes
+import ipaddress
+import subprocess
+
+SIOCGIFNETMASK = 0x891B
+SIOCGIFADDR = 0x8915
 
 def make2simplename(make):
     make1 = make.lower().strip()
@@ -85,7 +95,7 @@ def guess_driver_packages(make, model):
             else:
                 lib="lib"
             packages.append(lib+"sane-hpaio1")
-            packages.append("xsane")
+            packages.append("simple-scan")
 
     if packages:
         return packages
@@ -309,62 +319,82 @@ def download_and_install_firmware(make, model):
     os.system("rm -rf "+dir)
     return False
     """
+def get_default_gateway():
+    """Read the default gateway directly from /proc."""
+    with open("/proc/net/route") as fh:
+        for line in fh:
+            fields = line.strip().split()
+            if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                continue
+
+            return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
+            
+def get_default_iface():
+    """Read the default iface directly from /proc."""
+    with open("/proc/net/route") as fh:
+        for line in fh:
+            fields = line.strip().split()
+            if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                continue
+
+            return fields[0]
+            
+def get_netmask(iface):
+    """Get netmask for iface."""
+    ifreq = struct.pack(b'16sH14s', iface, socket.AF_INET, b'\x00'*14)
+    sockfd = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        res = fcntl.ioctl(sockfd, SIOCGIFNETMASK, ifreq)
+    except IOError:
+        return 0
+    netmask = socket.ntohl(struct.unpack(b'16sH2xI8x', res)[2])
+    
+    sockfd.close()
+    return 32 - int(round(
+        math.log(ctypes.c_uint32(~netmask).value + 1, 2), 1))
+
+def get_ip(iface):
+    """Get ip for iface."""
+    ifreq = struct.pack(b'16sH14s', iface, socket.AF_INET, b'\x00'*14)
+    sockfd = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        res = fcntl.ioctl(sockfd, SIOCGIFADDR, ifreq)
+    except IOError:
+        return None
+    ip = struct.unpack('16sH2x4s8x', res)[2]
+    
+    sockfd.close()
+    return socket.inet_ntoa(ip)
 
 def detect_network_printers():
+    """Get network printers IPv4 (jetdirect port)."""
     printers_final = []
     try:
-        a = open("/proc/net/route")
-        defaultiface = None
-        for i in csv.DictReader(a, delimiter="\t"):
-            if long(i['Destination'], 16) == 0:
-                defaultiface = i['Iface']
-        else:
-            return printers_final
-    except:
-        return printers_final
-
-    # TODO: write in a better way
-    try:
-        addrsline = os.popen("LC_ALL=C /sbin/ifconfig "+defaultiface+" | grep 'inet addr:' | sed 's/:/\\n/g' | grep '[0-9]' | sed 's/[^0-9\.]//g'")
-        c = addrsline.readlines()
-        ip = c[0].strip()
-        bcast = c[1].strip()
-        mask = c[2].strip()
-    except:
-        return printers_final
-
-    try:
-        pingres = os.popen("LC_ALL=C ping -b -c 2 "+bcast+ " | sed 's/.*bytes from \(.*\):.*/\\1/g' | grep '^[0-9].*[0-9]$' | uniq")
-        hostlist=""
-        for i in pingres.readlines():
-            if i.strip() == ip:
-                continue
-            if not hostlist:
-                hostlist = i.strip()
-            else:
-                hostlist += ("\n"+i.strip())
-    except:
-        return printers_final
-
-    try:
-        nmapresult = os.popen("echo -e '"+hostlist+"' | LC_ALL=C nmap -n -r -v -P0 --max-retries 1 --host_timeout 16000ms --initial_rtt_timeout 8000ms -p 9100 -d0 -iL - 2>/dev/null | grep -vE '(PORT|Host)'")
+        iface = str.encode(get_default_iface())
+        host4 = ipaddress.ip_interface(
+                get_ip(iface)+'/'+str(get_netmask(iface)))
+            
+        p1 = subprocess.Popen("LC_ALL=C nmap -n -r -v -P0 --max-retries 1 --host_timeout 16000ms --initial_rtt_timeout 8000ms -p 9100 -d0 %s - 2>/dev/null | grep -vE '(PORT|Host)'" % host4, stdout=subprocess.PIPE, shell=True)       
         reg = re.compile(r"Nmap scan report for (.*[0-9])")
         printers = []
+        nmapresult = iter(p1.communicate()[0].split(b'\n'))
+   
         while True:
             try:
-                i = nmapresult.next()
+                i = bytes.decode(nmapresult.__next__())
             except:
                 break
-    
+
             try:
                 try:
                     ip = reg.findall(i)[0]
                 except:
                     continue
-                a = nmapresult.next()
+                a = bytes.decode(nmapresult.__next__())
                 port=a.split()[0]
                 state=a.split()[1]
                 service=a.split()[2]
+            
                 if a.split()[1] == "open":
                     printers.append([ip,port,state,service])
                     printers_final.append("socket://"+ip)
@@ -373,4 +403,6 @@ def detect_network_printers():
         return printers_final
     except:
         return printers_final
+    
+    
 
