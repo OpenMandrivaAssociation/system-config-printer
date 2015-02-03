@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.3
-Release:	2
+Release:	3
 Url:		http://cyberelk.net/tim/software/system-config-printer/
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -51,7 +51,7 @@ Conflicts:	system-config-printer-gui < 1.4.2-7
 Requires:	libxml2-python
 #Requires:	gnome-python-gnomekeyring
 Requires:	virtual-notification-daemon
-Requires:	python-dbus
+Requires:	python3-dbus
 Requires:	python-curl
 Requires:	hplip-model-data
 #We now use packagekit
@@ -67,7 +67,7 @@ Suggests:	samba-client
 # Required for CheckUSBPermissions.py
 Requires:	acl
 Requires(post,postun):	rpm-helper
-Requires:	python
+Requires:	python >= 3
 Requires:	foomatic
 Requires:	python-cups
 Requires:	python-gi
