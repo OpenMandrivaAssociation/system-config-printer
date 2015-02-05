@@ -19,7 +19,6 @@ Patch3:		system-config-printer-1.3.1-start-applet.patch
 
 # Fedora patches
 Patch200:	system-config-printer-no-job-notifications.patch
-Patch203:	system-config-printer-systemd.patch
 
 # patches based Mageia patches
 Patch0:		system-config-printer-1.5.0-mdv_custom-applet.patch
@@ -109,17 +108,17 @@ This package provides the GTK frontend.
 %patch300 -p0 -b .mdv-1349
 
 # update mdv custom translation
-tar xvjf %{SOURCE3}
-pushd po
-for i in *.po; do
-    if [ ! -f ../po-mdv/$i ]; then
-        continue
-    fi
-    msgcat $i ../po-mdv/$i > ../po-mdv/$i-new
-    rm -f $i
-    mv ../po-mdv/$i-new $i
-done
-popd
+#tar xvjf %{SOURCE3}
+#pushd po
+#for i in *.po; do
+#    if [ ! -f ../po-mdv/$i ]; then
+#        continue
+#    fi
+#    msgcat $i ../po-mdv/$i > ../po-mdv/$i-new
+#    rm -f $i
+#    mv ../po-mdv/$i-new $i
+#done
+#popd
 
 autoreconf -fi
 
