@@ -66,7 +66,7 @@ diff --git a/ppdsloader.py b/ppdsloader.py
 index 5ae6365..bee216c 100644
 --- a/ppdsloader.py
 +++ b/ppdsloader.py
-@@ -107,7 +107,9 @@ class PPDsLoader(GObject.GObject):
+@@ -107,7 +107,10 @@
              self._bus):
              self._gpk_device_id = "MFG:%s;MDL:%s;" % (self._devid_dict["MFG"],
                                                        self._devid_dict["MDL"])
@@ -74,6 +74,7 @@ index 5ae6365..bee216c 100644
 +            # don't ask PackageKit for drivers, not used on Mageia (yet?)
 +            # and produces a scary error message (Anssi 03/2012)
 +            #self._query_packagekit ()
++            self._query_cups ()
          else:
              self._query_cups ()
  
@@ -170,7 +171,7 @@ index 1cda2f8..23e33be 100755
 +              'com.redhat.NewPrinterNotification', 'InstallSpoolerFailed',
 +              '', (), timeout=360)
 +          return
-+      except dbus.DBusException, e:
++      except dbus.DBusException as e:
 +          syslog (LOG_DEBUG, "D-Bus method call failed: %s" % e)
 +    packages = mdv_printer_custom.guess_driver_packages(make, model)
 +    syslog (LOG_DEBUG, "PACKAGES: %s" % packages)
@@ -188,7 +189,7 @@ index 1cda2f8..23e33be 100755
 +                'com.redhat.NewPrinterNotification', 'MissingDriver',
 +                'ss', (make,model,))
 +            return
-+      except dbus.DBusException, e:
++      except dbus.DBusException:
 +        pass
 +    if mdv_printer_custom.is_firmware_needed(make, model):
 +      if (not mdv_printer_custom.is_firmware_present(make,model)) and (mdv_printer_custom.make2simplename(make) == "hp"):
@@ -207,7 +208,7 @@ index 1cda2f8..23e33be 100755
 +          else:
 +            return
 +          
-+        except dbus.DBusException, e:
++        except dbus.DBusException:
 +          pass
 +
      installer = None
@@ -245,7 +246,7 @@ index 1cda2f8..23e33be 100755
 +              '/com/redhat/NewPrinterNotification',
 +              'com.redhat.NewPrinterNotification', 'SpoolerStartFailed',
 +              '', (), timeout=360)
-+        except dbus.DBusException, e:
++        except dbus.DBusException as e:
 +          syslog (LOG_DEBUG, "D-Bus method call failed: %s" % e)
 +
      syslog (LOG_DEBUG, "PPD: %s; Status: %d" % (ppdname, status))

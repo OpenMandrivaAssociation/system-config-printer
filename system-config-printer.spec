@@ -23,7 +23,7 @@ Patch203:	system-config-printer-systemd.patch
 
 # patches based Mageia patches
 Patch0:		system-config-printer-1.5.0-mdv_custom-applet.patch
-Patch2:		system-config-printer-1.5.3-mdv_custom-system-config-printer.patch
+Patch2:		system-config-printer-1.4.2-mdv_custom-system-config-printer.patch
 Patch4:		system-config-printer-1.4.4-udev-configure-printer-mdv.patch
 Patch5:		system-config-printer-1.4.2-mdv_custom-embedded_window.patch
 Patch300:	system-config-printer-1.3.7-remove-Brother-HL-2030-blacklist.patch
