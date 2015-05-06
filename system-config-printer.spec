@@ -130,7 +130,7 @@ autoreconf -fi
 
 make
 # (salem) this hack avoids requiring hplip
-%{_cc} %{SOURCE5} -o hp-makeuri-mdv -lhpmud
+%{__cc} %{SOURCE5} -o hp-makeuri-mdv -lhpmud
 
 %install
 %makeinstall_std
