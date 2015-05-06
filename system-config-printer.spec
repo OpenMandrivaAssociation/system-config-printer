@@ -223,6 +223,7 @@ fi
 %{_datadir}/%{name}/dnssdresolve.py*
 %{_datadir}/%{name}/firewallsettings.py*
 %{_datadir}/%{name}/installpackage.py*
+%{_datadir}/%{name}/killtimer.py*
 %{_datadir}/%{name}/monitor.py*
 %{_datadir}/%{name}/OpenPrintingRequest.py*
 %{_datadir}/%{name}/PhysicalDevice.py*
@@ -241,6 +242,7 @@ fi
 %{_datadir}/%{name}/__pycache__/asyncpk1.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/config.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/dnssdresolve.cpython-*.pyc
+%{_datadir}/%{name}/__pycache__/killtimer.cpython-34.pyc
 %{_datadir}/%{name}/__pycache__/monitor.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/ppdippstr.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/probe_printer.cpython-*.pyc
