@@ -11,6 +11,7 @@ import math
 import ctypes
 import ipaddress
 import subprocess
+import platform
 
 SIOCGIFNETMASK = 0x891B
 SIOCGIFADDR = 0x8915
@@ -90,7 +91,7 @@ def guess_driver_packages(make, model):
     # check scanning capabilities
     if is_scanning_capable(make1, model1):
         if task_printing_hp.count(make1):
-            if sys.arch == 'x86_64':
+            if platform.machine() == 'x86_64':
                 lib="lib64"
             else:
                 lib="lib"
@@ -146,29 +147,22 @@ def read_hplip_db():
     re_comment = re.compile("^#")
     db = {}
     current_entry=None
-    while True:
+    for b in a:
+        if re_entry_title.match(b):
+            b = b.strip()
+            b = b.lower()
+            current_entry=b[1:-1]
+            db[current_entry] = {}
+            continue
+        if re_comment.match(b):
+            continue
         try:
-            b = a.next()
+            (entry,data) = b.split("=")
         except:
-            b = None
+            continue
+        db[current_entry][entry] = data.strip().lower()
 
-        if b:
-            if re_entry_title.match(b):
-                b = b.strip()
-                b = b.lower()
-                current_entry=b[1:-1]
-                db[current_entry] = {}
-                continue
-            if re_comment.match(b):
-                continue
-            try:
-                (entry,data) = b.split("=")
-            except:
-                continue
-            db[current_entry][entry] = data.strip().lower()
-        else:
-            break
-
+    a.close();
     return db
 
 def is_scanning_capable(make, model):
@@ -177,10 +171,10 @@ def is_scanning_capable(make, model):
     model1 = model1.replace(" ", "_")
     if make2simplename(make1) == "hp":
         a = read_hplip_db()
-        if a and a.has_key(model1) and a[model1].has_key('scan-type'):
+        if a and model1 in a and 'scan-type' in a[model1]:
             if a[model1]['scan-type'] != '0':
                 return True
-        elif a and a.has_key(model1+"_series") and a[model1+"_series"].has_key('scan-type'):
+        elif a and (model1+"_series") in a and 'scan-type' in a[model1+"_series"]:
             if a[model1+"_series"]['scan-type'] != '0':
                 return True
     return False
@@ -191,10 +185,10 @@ def is_fax_capable(make, model):
     model1 = model1.replace(" ", "_")
     if make2simplename(make1) == "hp":
         a = read_hplip_db()
-        if a and a.has_key(model1) and a[model1].has_key('fax-type'):
+        if a and model1 in a and 'fax-type' in a[model1]:
             if a[model1]['fax-type'] != '0':
                 return True
-        elif a and a.has_key(model1+"_series") and a[model1+"_series"].has_key('fax-type'):
+        elif a and (model1+"_series") in a and 'fax-type' in a[model1+"_series"]:
             if a[model1+"_series"]['fax-type'] != '0':
                 return True
     return False

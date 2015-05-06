@@ -1,21 +1,31 @@
-diff --git a/newprinter.py b/newprinter.py
-index f049da8..975066c 100644
---- a/newprinter.py
-+++ b/newprinter.py
-@@ -44,6 +44,8 @@
+diff -Naur system-config-printer-1.5.7/newprinter.py system-config-printer-1.5.7.tpg/newprinter.py
+--- system-config-printer-1.5.7/newprinter.py	2015-04-23 15:05:58.000000000 +0000
++++ system-config-printer-1.5.7.tpg/newprinter.py	2015-05-06 22:11:45.813214296 +0000
+@@ -40,6 +40,8 @@
+ import requests
  import functools
- from io import StringIO
  
 +import mdv_printer_custom
 +
  import cups
  
  try:
-@@ -1160,6 +1162,27 @@
-                                     self.downloadable_driver_for_printer):
-                                     self.device.make_and_model = \
-                                         self.downloadable_driver_for_printer
-+                # mageia hook: ask to install the right driver
+@@ -1269,6 +1271,10 @@
+                         ppdname = 'raw'
+                         self.ppd = ppdname
+                         status = "exact"
++                    elif self.device.uri and self.device.uri.startswith ("parallel"):
++                        (p_make, p_model) = mdv_printer_custom.probe_parport_info(self.device.uri)
++                        self.auto_make = p_make
++                        self.auto_model = p_model
+                     else:
+                         (status, ppdname) = self.ppds.\
+                             getPPDNameFromDeviceID ("Generic",
+@@ -1599,6 +1605,26 @@
+                 self.downloadable_driver_for_printer):
+                 self.device.make_and_model = \
+                     self.downloadable_driver_for_printer
++                # mandriva hook: ask to install the right driver
 +                driver_packages=None
 +                if not self.remotecupsqueue and not self.device.type in ("lpd", "ipp", "bluetooth", "smb"):
 +                    if self.device.id_dict['DES'] != "AppSocket/HP JetDirect":
@@ -35,22 +45,10 @@ index f049da8..975066c 100644
 +                                dialog.destroy()
 +                            else:
 +                                break
-+
  
-                 devid = None
-                 if not self.remotecupsqueue or self.dialog_mode == "ppd":
-@@ -1276,6 +1299,10 @@
-                         ppdname = 'raw'
-                         self.ppd = ppdname
-                         status = "exact"
-+                    elif self.device.uri and self.device.uri.startswith ("parallel"):
-+                        (p_make, p_model) = mdv_printer_custom.probe_parport_info(self.device.uri)
-+                        self.auto_make = p_make
-+                        self.auto_model = p_model
-                     else:
-                         (status, ppdname) = self.ppds.\
-                             getPPDNameFromDeviceID ("Generic",
-@@ -2848,6 +2875,11 @@
+     def setNPButtons(self):
+         nr = self.ntbkNewPrinter.get_current_page()
+@@ -2949,6 +2975,11 @@
              # the selected device.
              if device.type == "parallel":
                  text = _("A printer connected to the parallel port.")
@@ -58,14 +56,13 @@ index f049da8..975066c 100644
 +                if p_make and p_model:
 +                    make_model = p_make + " " + p_model
 +                    info = make_model + " ("+ device.info + ")"
-+                    device.info = info
++                    device.info = inf
              elif device.type == "usb":
                  text = _("A printer connected to a USB port.")
              elif device.type == "bluetooth":
-diff --git a/ppdsloader.py b/ppdsloader.py
-index 5ae6365..bee216c 100644
---- a/ppdsloader.py
-+++ b/ppdsloader.py
+diff -Naur system-config-printer-1.5.7/ppdsloader.py system-config-printer-1.5.7.tpg/ppdsloader.py
+--- system-config-printer-1.5.7/ppdsloader.py	2015-04-23 15:05:58.000000000 +0000
++++ system-config-printer-1.5.7.tpg/ppdsloader.py	2015-05-06 22:11:45.814214324 +0000
 @@ -107,7 +107,10 @@
              self._bus):
              self._gpk_device_id = "MFG:%s;MDL:%s;" % (self._devid_dict["MFG"],
@@ -78,10 +75,9 @@ index 5ae6365..bee216c 100644
          else:
              self._query_cups ()
  
-diff --git a/system-config-printer.py b/system-config-printer.py
-index 390dd4a..d4ee88e 100755
---- a/system-config-printer.py
-+++ b/system-config-printer.py
+diff -Naur system-config-printer-1.5.7/system-config-printer.py system-config-printer-1.5.7.tpg/system-config-printer.py
+--- system-config-printer-1.5.7/system-config-printer.py	2015-04-23 15:05:58.000000000 +0000
++++ system-config-printer-1.5.7.tpg/system-config-printer.py	2015-05-06 22:14:35.183864833 +0000
 @@ -24,7 +24,7 @@
  # config is generated from config.py.in by configure
  import config
@@ -91,21 +87,24 @@ index 390dd4a..d4ee88e 100755
  import _thread
  import dbus
  try:
-@@ -456,6 +456,13 @@ class GUI(GtkGUI):
+@@ -490,6 +490,16 @@
+ 
  
          self.PrintersWindow.show()
- 
 +        # task-printing-hp is needed even if you dont have a HP printer. (hp-makeuri, hp-info..)
 +        if not mdv_printer_custom.is_installed_packages(['task-printing-server', 'task-printing-hp']):
 +            if not mdv_printer_custom.install_packages(['task-printing-server', 'task-printing-hp']):
 +                sys.exit (1)
++            # ensure any new udev rules are applied to existing devices
++            os.system("/sbin/udevadm control --reload-rules")
++            os.system("/sbin/udevadm trigger")
 +            os.system("/sbin/service cups start")
++            os.system("/bin/systemctl start org.cups.cupsd.service")
 +            self.on_btnRefresh_clicked(None)
-+
+ 
      def display_properties_dialog_for (self, queue):
          model = self.dests_iconview.get_model ()
-         iter = model.get_iter_first ()
-@@ -1823,6 +1830,7 @@ class GUI(GtkGUI):
+@@ -1906,6 +1916,7 @@
      def on_new_printer_activate(self, widget, *UNUSED):
          busy (self.PrintersWindow)
          self.desensitise_new_printer_widgets ()
@@ -113,17 +112,10 @@ index 390dd4a..d4ee88e 100755
          if not self.newPrinterGUI.init("printer",
                                         host=self.connect_server,
                                         encryption=self.connect_encrypt,
-diff --git a/udev/udev-add-printer b/udev/udev-add-printer
-index 1cda2f8..23e33be 100755
---- a/udev/udev-add-printer
-+++ b/udev/udev-add-printer
-@@ -1,4 +1,5 @@
- #!/usr/bin/python3 -s
-+# -*- coding: utf-8 -*-
- 
- ## udev-add-printer
- 
-@@ -25,6 +26,8 @@ import dbus
+diff -Naur system-config-printer-1.5.7/udev/udev-add-printer system-config-printer-1.5.7.tpg/udev/udev-add-printer
+--- system-config-printer-1.5.7/udev/udev-add-printer	2015-04-23 15:05:58.000000000 +0000
++++ system-config-printer-1.5.7.tpg/udev/udev-add-printer	2015-05-06 22:11:45.815214351 +0000
+@@ -25,6 +25,8 @@
  import os
  import sys
  import traceback
@@ -132,7 +124,7 @@ index 1cda2f8..23e33be 100755
  from syslog import *
  from functools import reduce
  
-@@ -104,6 +107,81 @@ def add_queue (device_id, device_uris, fax_basename=False):
+@@ -105,6 +107,81 @@
          return
  
      syslog (LOG_DEBUG, "add_queue: URIs=%s" % device_uris)
@@ -144,9 +136,9 @@ index 1cda2f8..23e33be 100755
 +
 +    syslog (LOG_DEBUG, "add_queue: make=%s" % make )
 +    syslog (LOG_DEBUG, "add_queue: model=%s" % model )
-+    
++
 +    bus = dbus.SystemBus()
-+    
++
 +    try:
 +      obj = bus.get_object ("com.redhat.NewPrinterNotification",
 +          "/com/redhat/NewPrinterNotification")
@@ -207,14 +199,14 @@ index 1cda2f8..23e33be 100755
 +            return
 +          else:
 +            return
-+          
++
 +        except dbus.DBusException:
 +          pass
 +
      installer = None
      if fax_basename != False:
          notification = None
-@@ -119,16 +197,6 @@ def add_queue (device_id, device_uris, fax_basename=False):
+@@ -120,16 +197,6 @@
              syslog (LOG_DEBUG, "D-Bus method call failed: %s" % e)
              notification = None
  
@@ -231,11 +223,11 @@ index 1cda2f8..23e33be 100755
      id_dict = cupshelpers.parseDeviceID (device_id)
      if installer:
          cmd = id_dict["CMD"]
-@@ -150,6 +218,20 @@ def add_queue (device_id, device_uris, fax_basename=False):
+@@ -151,6 +218,20 @@
                                                       id_dict["DES"],
                                                       id_dict["CMD"],
                                                       device_uris[0])
-+    
++
 +    """We reach here when we have cups installed"""
 +    if os.system("/sbin/service cups status") != 0:
 +      if os.system("/sbin/service cups restart") != 0:

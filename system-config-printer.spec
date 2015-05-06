@@ -22,10 +22,10 @@ Patch200:	system-config-printer-no-job-notifications.patch
 
 # patches based Mageia patches
 Patch0:		system-config-printer-1.5.0-mdv_custom-applet.patch
-Patch2:		system-config-printer-1.4.2-mdv_custom-system-config-printer.patch
+Patch2:		system-config-printer-1.5.7-mdv_custom-system-config-printer.patch
 Patch4:		system-config-printer-1.4.4-udev-configure-printer-mdv.patch
 Patch5:		system-config-printer-1.4.2-mdv_custom-embedded_window.patch
-Patch300:	system-config-printer-1.3.7-remove-Brother-HL-2030-blacklist.patch
+Patch300:	system-config-printer-1.5.7-remove-Brother-HL-2030-blacklist.patch
 
 BuildRequires:	cups-devel >= 1.2
 BuildRequires:	pkgconfig(python3)
@@ -106,7 +106,7 @@ This package provides the GTK frontend.
 %patch5 -p1 -b .mdv_custom-embedded-window
 # Don't show job notifications.
 %patch200 -p1 -b .no-job-notifications
-%patch300 -p0 -b .mdv-1349
+%patch300 -p1 -b .mdv-1349
 
 # update mdv custom translation
 #tar xvjf %{SOURCE3}
@@ -130,7 +130,7 @@ autoreconf -fi
 
 make
 # (salem) this hack avoids requiring hplip
-gcc %{SOURCE5} -o hp-makeuri-mdv -lhpmud
+%{_cc} %{SOURCE5} -o hp-makeuri-mdv -lhpmud
 
 %install
 %makeinstall_std
