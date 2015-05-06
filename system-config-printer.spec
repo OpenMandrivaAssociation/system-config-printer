@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.4
-Release:	1
+Release:	2
 Url:		http://cyberelk.net/tim/software/system-config-printer/
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -92,6 +92,7 @@ Requires:	typelib(Gtk) = 3.0
 Requires:	typelib(cairo) = 1.0
 Requires:	typelib(Pango) = 1.0
 Requires:	typelib(Atk) = 1.0
+Requires:	python-cairo
 
 %description gui
 This package provides the GTK frontend.
