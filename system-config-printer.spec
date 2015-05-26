@@ -70,7 +70,7 @@ Requires:	python >= 3
 Requires:	foomatic
 Requires:	python-cups
 Requires:	python-gi
-Requires:	python-request >= 2.3.0-3
+Requires:	python-requests >= 2.3.0-3
 Obsoletes:	hal-cups-utils <= 0.6.20
 Conflicts:	cups < 1.4.2-6
 
