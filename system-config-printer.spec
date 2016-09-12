@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.7
-Release:	6
+Release:	7
 Url:		http://cyberelk.net/tim/software/system-config-printer/
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -243,7 +243,7 @@ fi
 %{_datadir}/%{name}/__pycache__/asyncpk1.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/config.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/dnssdresolve.cpython-*.pyc
-%{_datadir}/%{name}/__pycache__/killtimer.cpython-34.pyc
+%{_datadir}/%{name}/__pycache__/killtimer.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/monitor.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/ppdippstr.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/probe_printer.cpython-*.pyc
