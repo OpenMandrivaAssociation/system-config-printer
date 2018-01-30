@@ -1,7 +1,6 @@
-diff -Naur system-config-printer-1.5.7/newprinter.py system-config-printer-1.5.7.tpg/newprinter.py
---- system-config-printer-1.5.7/newprinter.py	2015-04-23 15:05:58.000000000 +0000
-+++ system-config-printer-1.5.7.tpg/newprinter.py	2015-05-06 22:11:45.813214296 +0000
-@@ -40,6 +40,8 @@
+--- system-config-printer-1.5.11/newprinter.py.mdv_custom-system-config-printer	2018-01-24 14:38:55.000000000 +0100
++++ system-config-printer-1.5.11/newprinter.py	2018-01-30 20:47:17.059552128 +0100
+@@ -40,6 +40,8 @@ from gi.repository import Gtk
  import requests
  import functools
  
@@ -10,18 +9,18 @@ diff -Naur system-config-printer-1.5.7/newprinter.py system-config-printer-1.5.7
  import cups
  
  try:
-@@ -1269,6 +1271,10 @@
-                         ppdname = 'raw'
-                         self.ppd = ppdname
-                         status = "exact"
-+                    elif self.device.uri and self.device.uri.startswith ("parallel"):
-+                        (p_make, p_model) = mdv_printer_custom.probe_parport_info(self.device.uri)
-+                        self.auto_make = p_make
-+                        self.auto_model = p_model
-                     else:
-                         (status, ppdname) = self.ppds.\
-                             getPPDNameFromDeviceID ("Generic",
-@@ -1599,6 +1605,26 @@
+@@ -1621,6 +1623,10 @@ class NewPrinterGUI(GtkGUI):
+                 ppdname = 'raw'
+                 self.ppd = ppdname
+                 status = "exact"
++            elif self.device.uri and self.device.uri.startswith ("parallel"):
++                (p_make, p_model) = mdv_printer_custom.probe_parport_info(self.device.uri)
++                self.auto_make = p_make
++                self.auto_model = p_model
+             else:
+                 (status, ppdname) = self.ppds.\
+                     getPPDNameFromDeviceID ("Generic",
+@@ -1819,6 +1825,26 @@ class NewPrinterGUI(GtkGUI):
                  self.downloadable_driver_for_printer):
                  self.device.make_and_model = \
                      self.downloadable_driver_for_printer
@@ -48,7 +47,7 @@ diff -Naur system-config-printer-1.5.7/newprinter.py system-config-printer-1.5.7
  
      def setNPButtons(self):
          nr = self.ntbkNewPrinter.get_current_page()
-@@ -2949,6 +2975,11 @@
+@@ -3240,6 +3266,11 @@ class NewPrinterGUI(GtkGUI):
              # the selected device.
              if device.type == "parallel":
                  text = _("A printer connected to the parallel port.")
@@ -58,12 +57,11 @@ diff -Naur system-config-printer-1.5.7/newprinter.py system-config-printer-1.5.7
 +                    info = make_model + " ("+ device.info + ")"
 +                    device.info = inf
              elif device.type == "usb":
-                 text = _("A printer connected to a USB port.")
-             elif device.type == "bluetooth":
-diff -Naur system-config-printer-1.5.7/ppdsloader.py system-config-printer-1.5.7.tpg/ppdsloader.py
---- system-config-printer-1.5.7/ppdsloader.py	2015-04-23 15:05:58.000000000 +0000
-+++ system-config-printer-1.5.7.tpg/ppdsloader.py	2015-05-06 22:11:45.814214324 +0000
-@@ -107,7 +107,10 @@
+                 if (hasattr(device, "uri") and
+                     device.uri.lower().find("fax") > -1):
+--- system-config-printer-1.5.11/ppdsloader.py.mdv_custom-system-config-printer	2018-01-24 14:38:55.000000000 +0100
++++ system-config-printer-1.5.11/ppdsloader.py	2018-01-30 20:45:11.130510166 +0100
+@@ -107,7 +107,10 @@ class PPDsLoader(GObject.GObject):
              self._bus):
              self._gpk_device_id = "MFG:%s;MDL:%s;" % (self._devid_dict["MFG"],
                                                        self._devid_dict["MDL"])
@@ -75,9 +73,8 @@ diff -Naur system-config-printer-1.5.7/ppdsloader.py system-config-printer-1.5.7
          else:
              self._query_cups ()
  
-diff -Naur system-config-printer-1.5.7/system-config-printer.py system-config-printer-1.5.7.tpg/system-config-printer.py
---- system-config-printer-1.5.7/system-config-printer.py	2015-04-23 15:05:58.000000000 +0000
-+++ system-config-printer-1.5.7.tpg/system-config-printer.py	2015-05-06 22:14:35.183864833 +0000
+--- system-config-printer-1.5.11/system-config-printer.py.mdv_custom-system-config-printer	2018-01-24 14:38:55.000000000 +0100
++++ system-config-printer-1.5.11/system-config-printer.py	2018-01-30 20:47:43.459561430 +0100
 @@ -24,7 +24,7 @@
  # config is generated from config.py.in by configure
  import config
@@ -86,8 +83,8 @@ diff -Naur system-config-printer-1.5.7/system-config-printer.py system-config-pr
 +import sys, os, time, re, mdv_printer_custom
  import _thread
  import dbus
- try:
-@@ -490,6 +490,16 @@
+ import gi
+@@ -535,6 +535,16 @@ class GUI(GtkGUI):
  
  
          self.PrintersWindow.show()
@@ -104,7 +101,7 @@ diff -Naur system-config-printer-1.5.7/system-config-printer.py system-config-pr
  
      def display_properties_dialog_for (self, queue):
          model = self.dests_iconview.get_model ()
-@@ -1906,6 +1916,7 @@
+@@ -1962,6 +1972,7 @@ class GUI(GtkGUI):
      def on_new_printer_activate(self, widget, *UNUSED):
          busy (self.PrintersWindow)
          self.desensitise_new_printer_widgets ()
@@ -112,10 +109,9 @@ diff -Naur system-config-printer-1.5.7/system-config-printer.py system-config-pr
          if not self.newPrinterGUI.init("printer",
                                         host=self.connect_server,
                                         encryption=self.connect_encrypt,
-diff -Naur system-config-printer-1.5.7/udev/udev-add-printer system-config-printer-1.5.7.tpg/udev/udev-add-printer
---- system-config-printer-1.5.7/udev/udev-add-printer	2015-04-23 15:05:58.000000000 +0000
-+++ system-config-printer-1.5.7.tpg/udev/udev-add-printer	2015-05-06 22:11:45.815214351 +0000
-@@ -25,6 +25,8 @@
+--- system-config-printer-1.5.11/udev/udev-add-printer.mdv_custom-system-config-printer	2018-01-24 14:38:55.000000000 +0100
++++ system-config-printer-1.5.11/udev/udev-add-printer	2018-01-30 20:45:11.131510166 +0100
+@@ -25,6 +25,8 @@ import dbus
  import os
  import sys
  import traceback
@@ -124,7 +120,7 @@ diff -Naur system-config-printer-1.5.7/udev/udev-add-printer system-config-print
  from syslog import *
  from functools import reduce
  
-@@ -105,6 +107,81 @@
+@@ -105,6 +107,81 @@ def add_queue (device_id, device_uris, f
          return
  
      syslog (LOG_DEBUG, "add_queue: URIs=%s" % device_uris)
@@ -206,7 +202,7 @@ diff -Naur system-config-printer-1.5.7/udev/udev-add-printer system-config-print
      installer = None
      if fax_basename != False:
          notification = None
-@@ -120,16 +197,6 @@
+@@ -120,16 +197,6 @@ def add_queue (device_id, device_uris, f
              syslog (LOG_DEBUG, "D-Bus method call failed: %s" % e)
              notification = None
  
@@ -223,7 +219,7 @@ diff -Naur system-config-printer-1.5.7/udev/udev-add-printer system-config-print
      id_dict = cupshelpers.parseDeviceID (device_id)
      if installer:
          cmd = id_dict["CMD"]
-@@ -151,6 +218,20 @@
+@@ -151,6 +218,20 @@ def add_queue (device_id, device_uris, f
                                                       id_dict["DES"],
                                                       id_dict["CMD"],
                                                       device_uris[0])

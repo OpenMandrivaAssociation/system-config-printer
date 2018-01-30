@@ -1,11 +1,11 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
-Version:	1.5.7
-Release:	8
-Url:		http://cyberelk.net/tim/software/system-config-printer/
+Version:	1.5.11
+Release:	1
+Url:		https://github.com/zdohnal/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
-Source0:	http://cyberelk.net/tim/data/system-config-printer/1.4/%{name}-%{version}%{?gitsnap:-%gitsnap}.tar.xz
+Source0:	https://github.com/zdohnal/system-config-printer/archive/%{version}.tar.gz
 Source1:	system-config-printer.pam
 Source2:	system-config-printer.console
 Source3:	po-mdv.tar.bz2
@@ -15,7 +15,6 @@ Source4:	mdv_printer_custom.py
 Source6:	mdv_backend
 
 Source100:	system-config-printer.rpmlintrc
-Patch3:		system-config-printer-1.3.1-start-applet.patch
 
 # Fedora patches
 Patch200:	system-config-printer-no-job-notifications.patch
@@ -24,7 +23,6 @@ Patch200:	system-config-printer-no-job-notifications.patch
 Patch0:		system-config-printer-1.5.0-mdv_custom-applet.patch
 Patch2:		system-config-printer-1.5.7-mdv_custom-system-config-printer.patch
 Patch4:		system-config-printer-1.4.4-udev-configure-printer-mdv.patch
-Patch5:		system-config-printer-1.4.2-mdv_custom-embedded_window.patch
 Patch300:	system-config-printer-1.5.7-remove-Brother-HL-2030-blacklist.patch
 
 BuildRequires:	cups-devel >= 1.2
@@ -102,9 +100,7 @@ This package provides the GTK frontend.
 %setup -q
 %patch0 -p1 -b .mdv_custom-applet
 %patch2 -p1 -b .mdv_custom-system-config-printer
-%patch3 -p1 -b .start_applet
 %patch4 -p1 -b .udev-configue-printer-mdv
-%patch5 -p1 -b .mdv_custom-embedded-window
 # Don't show job notifications.
 %patch200 -p1 -b .no-job-notifications
 %patch300 -p1 -b .mdv-1349
@@ -122,7 +118,7 @@ This package provides the GTK frontend.
 #done
 #popd
 
-autoreconf -fi
+./bootstrap
 
 %build
 %configure \
@@ -197,7 +193,6 @@ if [ -f /etc/sysconfig/printing ]; then
 fi
 
 %files -f system-config-printer.lang
-%doc ChangeLog README
 %dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/__pycache__
 %dir %{_datadir}/%{name}/xml
@@ -323,5 +318,5 @@ fi
 %{_datadir}/%{name}/__pycache__/timedops.cpython-*.pyc
 %{_datadir}/%{name}/__pycache__/userdefault.cpython-*.pyc
 %{_datadir}/applications/system-config-printer.desktop
-%{_datadir}/appdata/*.appdata.xml
+%{_datadir}/metainfo/*.appdata.xml
 %{_mandir}/man1/*
