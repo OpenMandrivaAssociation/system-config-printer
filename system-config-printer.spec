@@ -211,6 +211,7 @@ fi
 %{_unitdir}/configure-printer@.service
 %{_bindir}/scp-dbus-service
 %{_bindir}/hp-makeuri-mdv
+%{_libdir}/%{python3_sitelib}/__pycache__/mdv_printer_custom.cpython-37*
 %{_datadir}/%{name}/asyncconn.py*
 %{_datadir}/%{name}/asyncpk1.py*
 %{_datadir}/%{name}/check-device-ids.py*
