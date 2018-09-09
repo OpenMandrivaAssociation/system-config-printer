@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.11
-Release:	2
+Release:	3
 Url:		https://github.com/zdohnal/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -211,7 +211,7 @@ fi
 %{_unitdir}/configure-printer@.service
 %{_bindir}/scp-dbus-service
 %{_bindir}/hp-makeuri-mdv
-/usr/lib64/python3.7/site-packages/__pycache__/mdv_printer_custom.cpython-37*
+%{python3_sitearch}/__pycache__/mdv_printer_custom.cpython-37*
 %{_datadir}/%{name}/asyncconn.py*
 %{_datadir}/%{name}/asyncpk1.py*
 %{_datadir}/%{name}/check-device-ids.py*
