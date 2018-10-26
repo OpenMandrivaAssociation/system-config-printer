@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.11
-Release:	3
+Release:	4
 Url:		https://github.com/zdohnal/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -69,6 +69,7 @@ Requires:	foomatic
 Requires:	python-cups
 Requires:	python-gi
 Requires:	python-requests >= 2.3.0-3
+Requires: libsecret-gir1
 Obsoletes:	hal-cups-utils <= 0.6.20
 Conflicts:	cups < 1.4.2-6
 
