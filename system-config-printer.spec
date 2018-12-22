@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.11
-Release:	5
+Release:	6
 Url:		https://github.com/zdohnal/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -71,6 +71,11 @@ Requires:	python-gi
 Requires:	python-requests >= 2.3.0-3
 Obsoletes:	hal-cups-utils <= 0.6.20
 Conflicts:	cups < 1.4.2-6
+# Detection
+Requires:	%mklibname secret-gir 1
+# For detecting network printers
+# https://github.com/OpenMandrivaAssociation/system-config-printer/blob/master/mdv_backend#L68
+Requires:	nmap
 
 %description
 system-config-printer is a user interface that allows
