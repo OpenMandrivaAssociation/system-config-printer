@@ -1,28 +1,14 @@
+
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.11
-Release:	6
+Release:	7
 Url:		https://github.com/zdohnal/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
 Source0:	https://github.com/zdohnal/system-config-printer/archive/%{version}.tar.gz
-Source1:	system-config-printer.pam
-Source2:	system-config-printer.console
-Source3:	po-mdv.tar.bz2
-Source5:	hp-makeuri-mdv.c
-# (tpg) from Mageia
-Source4:	mdv_printer_custom.py
-Source6:	mdv_backend
-
+Source10:       0001-Fix-constructing-the-auth-dialog.patch
 Source100:	system-config-printer.rpmlintrc
-
-# Fedora patches
-Patch200:	system-config-printer-no-job-notifications.patch
-
-# patches based Mageia patches
-Patch0:		system-config-printer-1.5.0-mdv_custom-applet.patch
-Patch2:		system-config-printer-1.5.7-mdv_custom-system-config-printer.patch
-Patch4:		system-config-printer-1.4.4-udev-configure-printer-mdv.patch
 Patch300:	system-config-printer-1.5.7-remove-Brother-HL-2030-blacklist.patch
 
 BuildRequires:	cups-devel >= 1.2
@@ -46,20 +32,11 @@ BuildRequires:	pkgconfig(systemd)
 %rename		system-config-printer-udev
 Conflicts:	system-config-printer-gui < 1.4.2-7
 Requires:	libxml2-python
-#Requires:	gnome-python-gnomekeyring
 Requires:	virtual-notification-daemon
 Requires:	python3-dbus
 Requires:	python-curl
 Requires:	hplip-model-data
-#We now use packagekit
-#Requires:	packagekit
-#Requires:	typelib(PackageKitGlib)
-# nmap is required to scan the network, just like
-# printerdrake used to do.
-Requires:	nmap
 Requires:	python-smbc
-# Why? kdeutils4-printer-applet reqires system-config-printer...
-#Conflicts:	kdeutils4-printer-applet
 Suggests:	samba-client
 # Required for CheckUSBPermissions.py
 Requires:	acl
@@ -73,9 +50,6 @@ Obsoletes:	hal-cups-utils <= 0.6.20
 Conflicts:	cups < 1.4.2-6
 # Detection
 Requires:	%mklibname secret-gir 1
-# For detecting network printers
-# https://github.com/OpenMandrivaAssociation/system-config-printer/blob/master/mdv_backend#L68
-Requires:	nmap
 
 %description
 system-config-printer is a user interface that allows
@@ -102,26 +76,7 @@ Requires:	python-cairo
 This package provides the GTK frontend.
 
 %prep
-%setup -q
-%patch0 -p1 -b .mdv_custom-applet
-%patch2 -p1 -b .mdv_custom-system-config-printer
-%patch4 -p1 -b .udev-configue-printer-mdv
-# Don't show job notifications.
-%patch200 -p1 -b .no-job-notifications
-%patch300 -p1 -b .mdv-1349
-
-# update mdv custom translation
-#tar xvjf %{SOURCE3}
-#pushd po
-#for i in *.po; do
-#    if [ ! -f ../po-mdv/$i ]; then
-#        continue
-#    fi
-#    msgcat $i ../po-mdv/$i > ../po-mdv/$i-new
-#    rm -f $i
-#    mv ../po-mdv/$i-new $i
-#done
-#popd
+%autosetup -p1
 
 ./bootstrap
 
@@ -131,8 +86,6 @@ This package provides the GTK frontend.
   --with-udev-rules
 
 make
-# (salem) this hack avoids requiring hplip
-%{__cc} %{SOURCE5} -o hp-makeuri-mdv -lhpmud
 
 %install
 %makeinstall_std
@@ -140,34 +93,21 @@ make
 mkdir -p %{buildroot}%{_mozillaextpath}
 mkdir -p %{buildroot}%{py_platsitedir}
 mkdir -p %{buildroot}%{_bindir}
-cp -f hp-makeuri-mdv %{buildroot}%{_bindir}
-# Make sure pyc files are generated, otherwise we can get
-# difficult to debug problems
+# Make sure pyc files are generated first
 pushd %{buildroot}%{_datadir}/%{name}
 python -m compileall .
 popd
 mkdir -p %{buildroot}%{py_platsitedir}
-cp -fv %{SOURCE4} %{buildroot}%{py_platsitedir}
 pushd %{buildroot}%{py_puresitedir}/cupshelpers
 python -m compileall .
 popd
 
 %{__mkdir_p} %{buildroot}%{_localstatedir}/run/udev-configure-printer
 touch %{buildroot}%{_localstatedir}/run/udev-configure-printer/usb-uris
-%{__mkdir_p} %{buildroot}%{_prefix}/lib/cups/backend
-cp -f %{SOURCE6} %{buildroot}%{_prefix}/lib/cups/backend
-
-mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_sbindir}
-mkdir -p %{buildroot}%{_sysconfdir}/pam.d
-mkdir -p %{buildroot}%{_sysconfdir}/security/console.apps
-install -p -m0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pam.d/%{name}
-install -p -m0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/security/console.apps/%{name}
-mv %{buildroot}%{_bindir}/%{name} %{buildroot}%{_sbindir}/%{name}
-ln -s consolehelper %{buildroot}%{_bindir}/%{name}
 
 %find_lang system-config-printer
 
+# (crazy) how  is that working these days ?
 %post
 # disable old printer detection system
 if [ -f /etc/sysconfig/printing ]; then
@@ -204,19 +144,17 @@ fi
 %dir %{_sysconfdir}/cupshelpers/
 %dir %{_localstatedir}/run/udev-configure-printer
 %dir %{python_sitelib}/cupshelpers
-%config(noreplace) %{_sysconfdir}/pam.d/%{name}
-%config(noreplace) %{_sysconfdir}/security/console.apps/%{name}
+# (crazy) why noreplace ?
 %config(noreplace) %{_sysconfdir}/cupshelpers/preferreddrivers.xml
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/com.redhat.NewPrinterNotification.conf
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/com.redhat.PrinterDriversInstaller.conf
 %config(noreplace) %{_datadir}/dbus-1/interfaces/org.fedoraproject.Config.Printing.xml
 %config(noreplace) %{_datadir}/dbus-1/services/org.fedoraproject.Config.Printing.service
+# uhm what ?
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
 /lib/udev/*
 %{_unitdir}/configure-printer@.service
 %{_bindir}/scp-dbus-service
-%{_bindir}/hp-makeuri-mdv
-%{python3_sitearch}/__pycache__/mdv_printer_custom.cpython-37*
 %{_datadir}/%{name}/asyncconn.py*
 %{_datadir}/%{name}/asyncpk1.py*
 %{_datadir}/%{name}/check-device-ids.py*
@@ -260,8 +198,6 @@ fi
 %{python_sitelib}/cupshelpers/installdriver.py*
 %{python_sitelib}/cupshelpers/xmldriverprefs.py*
 %{python_sitelib}/cupshelpers/__pycache__
-%{_prefix}/lib/cups/backend/mdv_backend
-%{py_platsitedir}/mdv_printer_custom.py*
 %{python_sitelib}/*.egg-info
 
 %files gui
@@ -270,7 +206,6 @@ fi
 %dir %{_datadir}/%{name}/icons
 %{_sysconfdir}/xdg/autostart/print-applet.desktop
 %{_bindir}/%{name}
-%{_sbindir}/%{name}
 %{_bindir}/install-printerdriver
 %{_bindir}/%{name}-applet
 %{_datadir}/%{name}/applet.py*
