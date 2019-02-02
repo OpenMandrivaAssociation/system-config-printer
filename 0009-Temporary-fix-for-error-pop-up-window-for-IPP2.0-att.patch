@@ -9,18 +9,6 @@ Subject: [PATCH 09/11] Temporary fix for error pop-up window for IPP2.0+
  printerproperties.py | 7 +------
  2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/NEWS b/NEWS
-index 5023608b..7c5691b2 100644
---- a/NEWS
-+++ b/NEWS
-@@ -14,6 +14,7 @@
- - Fix TypeError raised by debugprint call (https://github.com/zdohnal/system-config-printer/pull/121)
- - dbus: remove deprecated at_console statement (https://github.com/zdohnal/system-config-printer/pull/123)
- - fixed several memory leaks reported by Coverity scan
-+- temporary fix for error pop up message for IPP2.0+ attributes (https://github.com/zdohnal/system-config-printer/issues/122)
- 
- 1.5.10 changes
- --------------
 diff --git a/printerproperties.py b/printerproperties.py
 index ff85664b..ca43c25e 100755
 --- a/printerproperties.py
