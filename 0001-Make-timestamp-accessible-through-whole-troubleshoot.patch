@@ -1,0 +1,39 @@
+From 3e919cd7d5f63785e260e4696e6fe8a4f7448746 Mon Sep 17 00:00:00 2001
+From: Tomas Korbar <tkorbar@redhat.com>
+Date: Mon, 19 Nov 2018 13:25:18 +0100
+Subject: [PATCH 01/11] Make timestamp accessible through whole troubleshoot
+ process
+
+- until now timestamp was accessible only after some conditions
+were met which resulted in occasional bug
+---
+ troubleshoot/__init__.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/troubleshoot/__init__.py b/troubleshoot/__init__.py
+index 8b5caf5c..49d84dc8 100644
+--- a/troubleshoot/__init__.py
++++ b/troubleshoot/__init__.py
+@@ -23,6 +23,8 @@ from gi.repository import Gdk
+ from gi.repository import Gtk
+ import pprint
+ import sys
++import datetime
++import time
+ import traceback
+ 
+ if __name__ == "__main__":
+@@ -102,7 +104,9 @@ class Troubleshooter:
+ 
+         self.questions = []
+         self.question_answers = []
+-        self.answers = {}
++        # timestamp should be accessible through whole troubleshoot
++        now = datetime.datetime.fromtimestamp (time.time ())
++        self.answers = {'error_log_timestamp': now.strftime ("%F %T")}
+         self.moving_backwards = False
+ 
+         main.show_all ()
+-- 
+2.20.1
+

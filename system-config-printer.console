@@ -1,4 +1,0 @@
-. config-util
-PROGRAM=/usr/sbin/system-config-printer
-SESSION=true
-FALLBACK=true

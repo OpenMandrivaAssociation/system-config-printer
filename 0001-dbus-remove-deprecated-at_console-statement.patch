@@ -1,0 +1,89 @@
+From 19df47d2630b637d1802efe2c3cd5a00f2e40c3b Mon Sep 17 00:00:00 2001
+From: Tom Gundersen <teg@jklm.no>
+Date: Wed, 7 Nov 2018 17:11:46 +0100
+Subject: [PATCH] dbus: remove deprecated at_console statement
+
+As described in [0], this likely did not have the intended effect, so
+simply remove it. The change in behavior is that up until this patch
+it would be possible for root and any non-system user to potentially
+own the system-config-printer dbus names. Now this is extended to also
+allow any system user.
+
+[0]: <https://www.spinics.net/lists/linux-bluetooth/msg75267.html>
+
+Signed-off-by: Tom Gundersen <teg@jklm.no>
+CC: David Herrmann <dh.herrmann@gmail.com>
+---
+ dbus/com.redhat.NewPrinterNotification.conf  | 13 +------------
+ dbus/com.redhat.PrinterDriversInstaller.conf | 13 +------------
+ 2 files changed, 2 insertions(+), 24 deletions(-)
+
+diff --git a/dbus/com.redhat.NewPrinterNotification.conf b/dbus/com.redhat.NewPrinterNotification.conf
+index 912cbcd4..4ef92e37 100644
+--- a/dbus/com.redhat.NewPrinterNotification.conf
++++ b/dbus/com.redhat.NewPrinterNotification.conf
+@@ -2,27 +2,16 @@
+  "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+  "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+ <busconfig>
+-	<policy at_console="true">
+-		<allow own="com.redhat.NewPrinterNotification"/>
+-	</policy>
+-
+-	<policy user="root">
+-		<allow own="com.redhat.NewPrinterNotification"/>
+-	</policy>
+-
+ 	<policy user="root">
+ 		<allow send_destination="com.redhat.NewPrinterNotification"
+ 		       send_interface="com.redhat.NewPrinterNotification"/>
+ 	</policy>
+ 
+ 	<policy context="default">
+-		<deny own="com.redhat.NewPrinterNotification"/>
++		<allow own="com.redhat.NewPrinterNotification"/>
+ 
+ 		<deny send_destination="com.redhat.NewPrinterNotification"
+ 		      send_interface="com.redhat.NewPrinterNotification"/>
+-	</policy>
+-
+-	<policy context="default">
+ 		<allow send_destination="com.redhat.NewPrinterNotification"
+ 		       send_interface="org.freedesktop.DBus.Introspectable" />
+ 		<allow send_destination="com.redhat.NewPrinterNotification"
+diff --git a/dbus/com.redhat.PrinterDriversInstaller.conf b/dbus/com.redhat.PrinterDriversInstaller.conf
+index d5e5c543..e3ffb2fa 100644
+--- a/dbus/com.redhat.PrinterDriversInstaller.conf
++++ b/dbus/com.redhat.PrinterDriversInstaller.conf
+@@ -2,27 +2,16 @@
+  "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+  "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+ <busconfig>
+-	<policy at_console="true">
+-		<allow own="com.redhat.PrinterDriversInstaller"/>
+-	</policy>
+-
+-	<policy user="root">
+-		<allow own="com.redhat.PrinterDriversInstaller"/>
+-	</policy>
+-
+ 	<policy user="root">
+ 		<allow send_destination="com.redhat.PrinterDriversInstaller"
+ 		       send_interface="com.redhat.PrinterDriversInstaller"/>
+ 	</policy>
+ 
+ 	<policy context="default">
+-		<deny own="com.redhat.PrinterDriversInstaller"/>
++		<allow own="com.redhat.PrinterDriversInstaller"/>
+ 
+ 		<deny send_destination="com.redhat.PrinterDriversInstaller"
+ 		      send_interface="com.redhat.PrinterDriversInstaller"/>
+-	</policy>
+-
+-	<policy context="default">
+ 		<allow send_destination="com.redhat.PrinterDriversInstaller"
+ 		       send_interface="org.freedesktop.DBus.Introspectable" />
+ 		<allow send_destination="com.redhat.PrinterDriversInstaller"
+-- 
+2.17.2
+

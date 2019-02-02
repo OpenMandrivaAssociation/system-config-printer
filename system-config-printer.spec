@@ -2,13 +2,37 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.11
-Release:	7
+Release:	8
 Url:		https://github.com/zdohnal/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
 Source0:	https://github.com/zdohnal/system-config-printer/archive/%{version}.tar.gz
 Source10:       0001-Fix-constructing-the-auth-dialog.patch
 Source100:	system-config-printer.rpmlintrc
+# (crazy) from upstream git , remove all on next release
+Patch100:	0001-Fix-constructing-the-auth-dialog.patch
+Patch101:	0001-Use-ValueError-instead-of-ImportError-to-catch-excep.patch
+Patch102:	0001-Require-proper-version-of-GDK-and-GTK-in-scp-dbus-se.patch
+Patch103:	0001-Set-programe-name-for-scp-dbus-service-as-well.patch
+Patch104:	0001-require-Gtk-and-Gdk-version-3.0-in-asyncpk1.py.patch
+Patch105:	0001-encoding-Modified-to-use-utf-8-in-fdopen.patch
+Patch106:	0001-Fallback-to-using-LC_CTYPE-if-LC_MESSAGES-is-empty-a.patch
+Patch107:	0001-define-classes-for-Secret-only-when-libsecret-is-ins.patch
+Patch108:	0001-Fix-typo-in-debugprint-call-https-github.com-zdohnal.patch
+Patch109:	0001-Fix-TypeError-raised-by-debugprint-call.patch
+Patch110:	0001-dbus-remove-deprecated-at_console-statement.patch
+Patch111:	0001-Make-timestamp-accessible-through-whole-troubleshoot.patch
+Patch112:	0002-Add-way-how-to-support-signature-to-dbus-call.patch
+Patch113:	0003-Fix-bad-use-of-NamedTemporaryFile.patch
+Patch114:	0004-Fix-bad-call-of-cups-connection-getFile.patch
+Patch115:	0005-udev-udev-configure-printer.c-848-error-memleak-Memo.patch
+Patch116:	0006-udev-udev-configure-printer.c-device_uri-strings-lea.patch
+Patch117:	0007-udev-udev-configure-printer.c-map-and-usb_device_dev.patch
+Patch118:	0009-Temporary-fix-for-error-pop-up-window-for-IPP2.0-att.patch
+Patch119:	0010-Fix-writing-of-advanced-settings.patch
+Patch120:	0011-Fix-compatibility-with-python3-in-putFile-method.patch
+
+# (crazy) ?!?
 Patch300:	system-config-printer-1.5.7-remove-Brother-HL-2030-blacklist.patch
 
 BuildRequires:	cups-devel >= 1.2
@@ -30,6 +54,7 @@ BuildRequires:	pkgconfig(systemd)
 %rename		printerdrake
 %rename		system-config-printer-libs
 %rename		system-config-printer-udev
+
 Conflicts:	system-config-printer-gui < 1.4.2-7
 Requires:	libxml2-python
 Requires:	virtual-notification-daemon
@@ -78,6 +103,7 @@ This package provides the GTK frontend.
 %prep
 %autosetup -p1
 
+
 ./bootstrap
 
 %build
@@ -107,36 +133,6 @@ touch %{buildroot}%{_localstatedir}/run/udev-configure-printer/usb-uris
 
 %find_lang system-config-printer
 
-# (crazy) how  is that working these days ?
-%post
-# disable old printer detection system
-if [ -f /etc/sysconfig/printing ]; then
-    if grep -q ^AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
-        sed -i 's/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=.*/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no/g' /etc/sysconfig/printing
-    else
-        echo AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
-    fi
-    if grep -q ^ENABLE_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
-        sed -i 's/ENABLE_QUEUES_ON_PRINTER_CONNECTED=.*/ENABLE_QUEUES_ON_PRINTER_CONNECTED=no/g' /etc/sysconfig/printing
-    else
-        echo ENABLE_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
-    fi
-else
-    echo AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
-    echo ENABLE_QUEUES_ON_PRINTER_CONNECTED=no >> /etc/sysconfig/printing
-fi
-
-%postun
-# enable old printer detection system
-if [ -f /etc/sysconfig/printing ]; then
-    if grep -q ^AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
-        sed -i 's/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=.*/AUTO_SETUP_QUEUES_ON_PRINTER_CONNECTED=yes/g' /etc/sysconfig/printing
-    fi
-    if grep -q ^ENABLE_QUEUES_ON_PRINTER_CONNECTED= /etc/sysconfig/printing; then
-        sed -i 's/ENABLE_QUEUES_ON_PRINTER_CONNECTED=.*/ENABLE_QUEUES_ON_PRINTER_CONNECTED=yes/g' /etc/sysconfig/printing
-    fi
-fi
-
 %files -f system-config-printer.lang
 %dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/__pycache__
@@ -148,8 +144,8 @@ fi
 %config(noreplace) %{_sysconfdir}/cupshelpers/preferreddrivers.xml
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/com.redhat.NewPrinterNotification.conf
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/com.redhat.PrinterDriversInstaller.conf
-%config(noreplace) %{_datadir}/dbus-1/interfaces/org.fedoraproject.Config.Printing.xml
-%config(noreplace) %{_datadir}/dbus-1/services/org.fedoraproject.Config.Printing.service
+%{_datadir}/dbus-1/interfaces/org.fedoraproject.Config.Printing.xml
+%{_datadir}/dbus-1/services/org.fedoraproject.Config.Printing.service
 # uhm what ?
 %verify(not md5 size mtime) %config(noreplace,missingok) %attr(0644,root,root) %{_localstatedir}/run/udev-configure-printer/usb-uris
 /lib/udev/*

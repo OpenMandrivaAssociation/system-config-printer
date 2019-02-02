@@ -1,0 +1,26 @@
+From 027ed8683a0ec30dbe705fe4d8f31c8ccb973199 Mon Sep 17 00:00:00 2001
+From: Zdenek Dohnal <zdohnal@redhat.com>
+Date: Thu, 30 Aug 2018 12:05:53 +0200
+Subject: [PATCH] Fix typo in debugprint call
+ (https://github.com/zdohnal/system-config-printer/issues/105)
+
+---
+ newprinter.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/newprinter.py b/newprinter.py
+index 850c986b..051fc253 100644
+--- a/newprinter.py
++++ b/newprinter.py
+@@ -1049,7 +1049,7 @@ class NewPrinterGUI(GtkGUI):
+             debugprint('No packages for driver')
+             return None
+         if len(arches) > 1:
+-            debugprint('Returned more than one matching architecture, please report this as a bug: %s', repr (arches))
++            debugprint('Returned more than one matching architecture, please report this as a bug: %s' % repr (arches))
+             return None
+ 
+         pkgs = pkgs[arches[0]]
+-- 
+2.17.2
+

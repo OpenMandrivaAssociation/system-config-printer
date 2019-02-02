@@ -1,0 +1,26 @@
+From 8a623c2f038dd85da3df647531c6a881d235523c Mon Sep 17 00:00:00 2001
+From: Zdenek Dohnal <zdohnal@redhat.com>
+Date: Fri, 23 Mar 2018 13:43:41 +0100
+Subject: [PATCH] require Gtk and Gdk version 3.0 in asyncpk1.py
+
+---
+ asyncpk1.py | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/asyncpk1.py b/asyncpk1.py
+index 65d2e768..849c995f 100644
+--- a/asyncpk1.py
++++ b/asyncpk1.py
+@@ -22,7 +22,9 @@ import cups
+ import dbus
+ from functools import reduce
+ try:
++    gi.require_version('Gdk', '3.0')
+     from gi.repository import Gdk
++    gi.require_version('Gtk', '3.0')
+     from gi.repository import Gtk
+ except:
+     pass
+-- 
+2.17.2
+

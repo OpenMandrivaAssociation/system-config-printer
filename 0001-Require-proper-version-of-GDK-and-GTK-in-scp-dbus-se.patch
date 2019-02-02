@@ -1,0 +1,35 @@
+From 3fee7c63c3aba395a3d8cf0bf4ea0fd2fae695ae Mon Sep 17 00:00:00 2001
+From: Laurent Bigonville <bigon@bigon.be>
+Date: Mon, 26 Feb 2018 11:54:10 +0100
+Subject: [PATCH] Require proper version of GDK and GTK in scp-dbus-service as
+ well
+
+scp-dbus-service can be D-Bus activated, that means that
+gi.require_version() is not called before.
+
+That needs to be kept in sync with the required version in the main
+program file.
+---
+ scp-dbus-service.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/scp-dbus-service.py b/scp-dbus-service.py
+index f0f51efc..3aefc6c6 100644
+--- a/scp-dbus-service.py
++++ b/scp-dbus-service.py
+@@ -21,9 +21,12 @@
+ ## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ 
+ import dbus.service
++import gi
+ from gi.repository import GObject
+ from gi.repository import GLib
++gi.require_version('Gdk', '3.0')
+ from gi.repository import Gdk
++gi.require_version('Gtk', '3.0')
+ from gi.repository import Gtk
+ import sys
+ 
+-- 
+2.17.2
+
