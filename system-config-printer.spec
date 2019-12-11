@@ -2,7 +2,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.11
-Release:	8
+Release:	9
 Url:		https://github.com/zdohnal/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
