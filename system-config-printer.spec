@@ -1,39 +1,12 @@
-
 Name:		system-config-printer
 Summary:	A printer administration tool
-Version:	1.5.11
-Release:	11
-Url:		https://github.com/zdohnal/system-config-printer
+Version:	1.5.15
+Release:	1
+Url:		https://github.com/OpenPrinting/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
-Source0:	https://github.com/zdohnal/system-config-printer/archive/%{version}.tar.gz
-Source10:       0001-Fix-constructing-the-auth-dialog.patch
+Source0:	https://github.com/OpenPrinting/system-config-printer/archive/%{name}-%{version}.tar.xz
 Source100:	system-config-printer.rpmlintrc
-# (crazy) from upstream git , remove all on next release
-Patch100:	0001-Fix-constructing-the-auth-dialog.patch
-Patch101:	0001-Use-ValueError-instead-of-ImportError-to-catch-excep.patch
-Patch102:	0001-Require-proper-version-of-GDK-and-GTK-in-scp-dbus-se.patch
-Patch103:	0001-Set-programe-name-for-scp-dbus-service-as-well.patch
-Patch104:	0001-require-Gtk-and-Gdk-version-3.0-in-asyncpk1.py.patch
-Patch105:	0001-encoding-Modified-to-use-utf-8-in-fdopen.patch
-Patch106:	0001-Fallback-to-using-LC_CTYPE-if-LC_MESSAGES-is-empty-a.patch
-Patch107:	0001-define-classes-for-Secret-only-when-libsecret-is-ins.patch
-Patch108:	0001-Fix-typo-in-debugprint-call-https-github.com-zdohnal.patch
-Patch109:	0001-Fix-TypeError-raised-by-debugprint-call.patch
-Patch110:	0001-dbus-remove-deprecated-at_console-statement.patch
-Patch111:	0001-Make-timestamp-accessible-through-whole-troubleshoot.patch
-Patch112:	0002-Add-way-how-to-support-signature-to-dbus-call.patch
-Patch113:	0003-Fix-bad-use-of-NamedTemporaryFile.patch
-Patch114:	0004-Fix-bad-call-of-cups-connection-getFile.patch
-Patch115:	0005-udev-udev-configure-printer.c-848-error-memleak-Memo.patch
-Patch116:	0006-udev-udev-configure-printer.c-device_uri-strings-lea.patch
-Patch117:	0007-udev-udev-configure-printer.c-map-and-usb_device_dev.patch
-Patch118:	0009-Temporary-fix-for-error-pop-up-window-for-IPP2.0-att.patch
-Patch119:	0010-Fix-writing-of-advanced-settings.patch
-Patch120:	0011-Fix-compatibility-with-python3-in-putFile-method.patch
-
-# (crazy) ?!?
-Patch300:	system-config-printer-1.5.7-remove-Brother-HL-2030-blacklist.patch
 
 BuildRequires:	cups-devel >= 1.2
 BuildRequires:	pkgconfig(python3)
@@ -43,12 +16,13 @@ BuildRequires:	intltool
 BuildRequires:	xmlto
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
-BuildRequires:	udev-devel
+BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(libusb-1.0)
 BuildRequires:	libhpip-devel
 BuildRequires:	pkgconfig(dbus-1)
 BuildRequires:	pkgconfig(dbus-glib-1)
 BuildRequires:	pkgconfig(systemd)
+BuildRequires:	pkgconfig(udev)
 
 %rename		desktop-printing
 %rename		printerdrake
@@ -109,24 +83,25 @@ This package provides the GTK frontend.
 %build
 %configure \
   --with-systemdsystemunitdir=%{_unitdir} \
+  --with-udevdir="/lib/udev" \
   --with-udev-rules
 
-make
+%make_build
 
 %install
-%makeinstall_std
+%make_install
 
 mkdir -p %{buildroot}%{_mozillaextpath}
 mkdir -p %{buildroot}%{py_platsitedir}
 mkdir -p %{buildroot}%{_bindir}
 # Make sure pyc files are generated first
-pushd %{buildroot}%{_datadir}/%{name}
+cd %{buildroot}%{_datadir}/%{name}
 python -m compileall .
-popd
+cd -
 mkdir -p %{buildroot}%{py_platsitedir}
-pushd %{buildroot}%{py_puresitedir}/cupshelpers
+cd %{buildroot}%{py_puresitedir}/cupshelpers
 python -m compileall .
-popd
+cd -
 
 %{__mkdir_p} %{buildroot}%{_localstatedir}/run/udev-configure-printer
 touch %{buildroot}%{_localstatedir}/run/udev-configure-printer/usb-uris
