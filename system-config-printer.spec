@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.15
-Release:	1
+Release:	2
 Url:		https://github.com/OpenPrinting/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -30,6 +30,8 @@ BuildRequires:	pkgconfig(udev)
 %rename		system-config-printer-udev
 
 Conflicts:	system-config-printer-gui < 1.4.2-7
+Requires:	at-spi2-core
+Requires:	at-spi2-atk
 Requires:	libxml2-python
 Requires:	virtual-notification-daemon
 Requires:	python3-dbus
@@ -44,6 +46,7 @@ Requires:	python >= 3
 Requires:	foomatic
 Requires:	python-cups
 Requires:	python-gi
+Requires:	python-gobject3
 Requires:	python-requests >= 2.3.0-3
 Obsoletes:	hal-cups-utils <= 0.6.20
 Conflicts:	cups < 1.4.2-6
