@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.15
-Release:	3
+Release:	4
 Url:		https://github.com/OpenPrinting/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
@@ -66,7 +66,7 @@ Requires:	gnome-icon-theme
 Requires:	dbus-x11
 Requires:	typelib(xlib) = 2.0
 Requires:	typelib(Gdk) = 3.0
-Requires:	typelib(Notify) = 0.7
+Requires:	typelib(Notify)
 Requires:	typelib(GnomeKeyring) = 1.0
 Requires:	typelib(Gtk) = 3.0
 Requires:	typelib(cairo) = 1.0
