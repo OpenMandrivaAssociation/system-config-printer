@@ -81,9 +81,8 @@ This package provides the GTK frontend.
 %autosetup -p1
 
 
-#./bootstrap
-
 %build
+./bootstrap
 %configure \
   --with-systemdsystemunitdir=%{_unitdir} \
   --with-udevdir="/lib/udev" \
