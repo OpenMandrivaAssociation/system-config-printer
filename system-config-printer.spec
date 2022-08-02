@@ -11,6 +11,7 @@ Source100:	system-config-printer.rpmlintrc
 BuildRequires:	cups-devel >= 1.2
 BuildRequires:	pkgconfig(python3)
 BuildRequires:	desktop-file-utils >= 0.2.92
+BuildRequires:  glib-gettextize
 BuildRequires:	gettext-devel
 BuildRequires:	intltool
 BuildRequires:	xmlto
