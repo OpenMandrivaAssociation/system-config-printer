@@ -81,7 +81,7 @@ This package provides the GTK frontend.
 %autosetup -p1
 
 
-./bootstrap
+#./bootstrap
 
 %build
 %configure \
