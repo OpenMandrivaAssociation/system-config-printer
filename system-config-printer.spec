@@ -9,6 +9,7 @@ Source0:	https://github.com/OpenPrinting/system-config-printer/releases/download
 Source100:	system-config-printer.rpmlintrc
 
 BuildRequires:	autoconf
+BuildRequires:	autoconf-archive
 BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	make
