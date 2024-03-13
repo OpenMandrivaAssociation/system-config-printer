@@ -8,6 +8,10 @@ Group:		System/Configuration/Printing
 Source0:	https://github.com/OpenPrinting/system-config-printer/releases/download/v%{version}/system-config-printer-%{version}.tar.xz
 Source100:	system-config-printer.rpmlintrc
 
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool
+BuildRequires:	make
 BuildRequires:	pkgconfig(cups) >= 1.2
 BuildRequires:	pkgconfig(python3)
 BuildRequires:	desktop-file-utils >= 0.2.92
