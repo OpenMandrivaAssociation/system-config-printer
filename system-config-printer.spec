@@ -82,7 +82,6 @@ This package provides the GTK frontend.
 %autosetup -p1
 # workaround https://github.com/pypa/setuptools/issues/3143
 sed -i 's/setup.py install --prefix=$(DESTDIR)$(prefix)/setup.py install --root $(DESTDIR) --prefix=$(prefix)/' Makefile*
-./bootstrap
 
 %build
 %configure \
