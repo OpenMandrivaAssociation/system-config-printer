@@ -1,0 +1,44 @@
+From 77540d0cb539364bbf63e21cfa970e62d9a86ed3 Mon Sep 17 00:00:00 2001
+From: Zdenek Dohnal <zdohnal@redhat.com>
+Date: Tue, 12 Mar 2024 18:59:43 +0100
+Subject: [PATCH] udev: Fix exit value when device is already handled
+
+---
+ NEWS                          | 1 +
+ udev/udev-configure-printer.c | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/NEWS b/NEWS
+index 910e46968..78c81d61e 100644
+--- a/NEWS
++++ b/NEWS
+@@ -1,6 +1,7 @@
+ 1.5.19 changes
+ --------------
+ - Fix `debugprint()` call in options.py (Issue #291)
++- Fix exit value if the device is already handled
+ 
+ 1.5.18 changes
+ --------------
+diff --git a/udev/udev-configure-printer.c b/udev/udev-configure-printer.c
+index fd158b09e..5703c1af8 100644
+--- a/udev/udev-configure-printer.c
++++ b/udev/udev-configure-printer.c
+@@ -806,7 +806,7 @@ device_id_from_devpath (struct udev *udev, const char *devpath,
+   {
+     udev_device_unref (dev);
+     syslog (LOG_ERR, "unable to access %s", syspath);
+-    return NULL;
++    exit (1);
+   }
+ 
+   usb_device_devpath = strdup (udev_device_get_devpath (dev));
+@@ -831,7 +831,7 @@ device_id_from_devpath (struct udev *udev, const char *devpath,
+     syslog (LOG_DEBUG, "Device already handled");
+     free (usb_device_devpath);
+     free (devicefilepath);
+-    return NULL;
++    exit (0);
+   }
+ 
+   serial = udev_device_get_sysattr_value (dev, "serial");

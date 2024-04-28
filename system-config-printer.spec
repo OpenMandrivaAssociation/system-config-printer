@@ -45,7 +45,6 @@ Requires:	python%{pyver}dist(pysmbc)
 Requires:	python%{pyver}dist(pycups)
 Requires:	python%{pyver}dist(pygobject)
 Requires:	python%{pyver}dist(requests) >= 2.3.0
-Requires:	python-gobject3
 Requires:	hplip-model-data
 Suggests:	samba-client
 # Required for CheckUSBPermissions.py
@@ -54,6 +53,11 @@ Requires:	python >= 3
 Requires:	foomatic
 # Detection
 Requires:	%mklibname secret-gir 1
+
+%patchlist
+https://github.com/OpenPrinting/system-config-printer/commit/f0bc27ca4f580aa93fa00aca61b516a9dd0e3a6b.patch
+https://github.com/OpenPrinting/system-config-printer/commit/399b3334d6519639cfe7f1c0457e2475b8ee5230.patch
+https://github.com/OpenPrinting/system-config-printer/commit/77540d0cb539364bbf63e21cfa970e62d9a86ed3.patch
 
 %description
 system-config-printer is a user interface that allows
