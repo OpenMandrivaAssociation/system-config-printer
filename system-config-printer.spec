@@ -1,7 +1,7 @@
 Name:		system-config-printer
 Summary:	A printer administration tool
 Version:	1.5.18
-Release:	2
+Release:	3
 Url:		https://github.com/OpenPrinting/system-config-printer
 License:	LGPLv2+
 Group:		System/Configuration/Printing
