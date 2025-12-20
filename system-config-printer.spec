@@ -90,7 +90,10 @@ This package provides the GTK frontend.
 sed -i 's/setup.py install --prefix=$(DESTDIR)$(prefix)/setup.py install --root $(DESTDIR) --prefix=$(prefix)/' Makefile*
 
 %build
-%configure \
+./configure \
+	--prefix=%{_prefix} \
+    --libdir=%{_libdir} \
+	--sysconfdir=%{_sysconfdir} \
 	--with-systemdsystemunitdir=%{_unitdir} \
 	--with-udevdir="%{_prefix}/lib/udev" \
 	--with-udev-rules
