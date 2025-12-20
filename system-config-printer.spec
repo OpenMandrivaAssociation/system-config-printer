@@ -15,6 +15,7 @@ BuildRequires:	libtool
 BuildRequires:	make
 BuildRequires:	pkgconfig(cups) >= 1.2
 BuildRequires:	pkgconfig(python3)
+BuildRequires:	python%{pyver}dist(setuptools)
 BuildRequires:	desktop-file-utils >= 0.2.92
 BuildRequires:	gettext-devel
 BuildRequires:	intltool
