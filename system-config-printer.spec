@@ -8,6 +8,8 @@ Group:		System/Configuration/Printing
 Source0:	https://github.com/OpenPrinting/system-config-printer/releases/download/v%{version}/system-config-printer-%{version}.tar.xz
 Source100:	system-config-printer.rpmlintrc
 
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
 BuildRequires:	autoconf
 BuildRequires:	autoconf-archive
 BuildRequires:	automake
